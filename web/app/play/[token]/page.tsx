@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import DicePanel from "../../../components/DicePanel";
 import { api, mediaUrl } from "../../../lib/api";
-import type { Creature, DiceRoll, GalleryImage, GameMap, Token } from "../../../lib/types";
+import type { Creature, DiceRoll, GalleryImage, GameMap, Token, Viewer } from "../../../lib/types";
 import { playerSocketUrl, useWS, type WSMessage } from "../../../lib/useWS";
 
 const TableCanvas = dynamic(() => import("../../../components/TableCanvas"), { ssr: false });
@@ -31,6 +31,7 @@ export default function PlayerPage() {
   const [view, setView] = useState<"map" | "image">("map");
   const [detail, setDetail] = useState<Creature | null>(null);
   const [playerName, setPlayerName] = useState("Player");
+  const [viewers, setViewers] = useState<Viewer[]>([]);
 
   const reloadState = useCallback(async () => {
     const s = await api.playerState(token);
@@ -43,6 +44,14 @@ export default function PlayerPage() {
 
   const onMessage = useCallback((msg: WSMessage) => {
     switch (msg.type) {
+      case "state":
+        setMap((msg.map as GameMap | null) ?? null);
+        setTokens((msg.tokens as Token[]) ?? []);
+        setActiveImage((msg.active_image as GalleryImage | null) ?? null);
+        break;
+      case "presence":
+        setViewers((msg.viewers as Viewer[]) ?? []);
+        break;
       case "token_upsert":
       case "token_move":
         setTokens((prev) => upsert(prev, msg.token as Token));
@@ -78,6 +87,12 @@ export default function PlayerPage() {
       }
     })();
   }, [token, reloadState]);
+
+  // Announce the player's chosen name to the table.
+  useEffect(() => {
+    send({ type: "presence", name: playerName });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playerName]);
 
   const canMove = (t: Token) => !!seatId && t.owner_seat_id === seatId;
 
@@ -139,6 +154,16 @@ export default function PlayerPage() {
       <aside style={{ background: "#13161d", borderLeft: "1px solid #222834", padding: 14, overflowY: "auto" }}>
         <h3 style={label}>You</h3>
         <input value={playerName} onChange={(e) => setPlayerName(e.target.value)} style={input} placeholder="Your name" />
+
+        <h3 style={{ ...label, marginTop: 18 }}>At the table ({viewers.length})</h3>
+        {viewers.map((v, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, marginBottom: 2 }}>
+            <span style={{ width: 10, height: 10, borderRadius: "50%", background: v.color, display: "inline-block" }} />
+            {v.name}
+            {v.is_dm && <span style={{ color: "#f0c060" }}> (DM)</span>}
+          </div>
+        ))}
+
         <h3 style={{ ...label, marginTop: 18 }}>Dice</h3>
         <DicePanel rolls={rolls} onRoll={(f, v) => api.playerRoll(token, f, v, playerName)} />
       </aside>

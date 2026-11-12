@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import CreatureEditor from "../../../components/CreatureEditor";
 import DicePanel from "../../../components/DicePanel";
 import { api, getToken } from "../../../lib/api";
-import type { Campaign, Creature, DiceRoll, GalleryImage, GameMap, Token } from "../../../lib/types";
+import type { Campaign, Creature, DiceRoll, GalleryImage, GameMap, Token, Viewer } from "../../../lib/types";
 import { dmSocketUrl, useWS, type WSMessage } from "../../../lib/useWS";
 
 const TableCanvas = dynamic(() => import("../../../components/TableCanvas"), { ssr: false });
@@ -44,6 +44,7 @@ export default function DMSessionPage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [fogMode, setFogMode] = useState(false);
   const [editingCreature, setEditingCreature] = useState<Creature | null>(null);
+  const [viewers, setViewers] = useState<Viewer[]>([]);
 
   const creatureById = useMemo(() => new Map(creatures.map((c) => [c.id, c])), [creatures]);
   const jwt = getToken();
@@ -51,6 +52,15 @@ export default function DMSessionPage() {
   // Live sync.
   const onMessage = useCallback((msg: WSMessage) => {
     switch (msg.type) {
+      case "state":
+        if (msg.map) {
+          setActiveMap(msg.map as GameMap);
+          setTokens((msg.tokens as Token[]) ?? []);
+        }
+        break;
+      case "presence":
+        setViewers((msg.viewers as Viewer[]) ?? []);
+        break;
       case "token_upsert":
       case "token_move": {
         const t = msg.token as Token;
@@ -256,8 +266,21 @@ export default function DMSessionPage() {
         )}
       </main>
 
-      {/* Right: dice */}
+      {/* Right: presence + dice */}
       <aside style={side}>
+        <Section title={`At the table (${viewers.length})`}>
+          {viewers.length === 0 ? (
+            <div style={{ color: "#6b7280", fontSize: 13 }}>No one connected yet.</div>
+          ) : (
+            viewers.map((v, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
+                <span style={{ width: 10, height: 10, borderRadius: "50%", background: v.color, display: "inline-block" }} />
+                {v.name}
+                {v.is_dm && <span style={{ color: "#f0c060" }}> (DM)</span>}
+              </div>
+            ))
+          )}
+        </Section>
         <Section title="Dice">
           <DicePanel rolls={rolls} onRoll={(f, v) => api.dmRoll(campaignId, f, v)} />
         </Section>

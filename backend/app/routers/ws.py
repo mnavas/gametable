@@ -17,13 +17,47 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 from sqlalchemy import select
 
+from sqlalchemy.orm import Session
+
 from ..database import SessionLocal
-from ..models import Campaign, Map, ShareLink, Token, User
+from ..models import Campaign, GalleryImage, Map, PlayerSeat, ShareLink, Token, User
 from ..realtime import Connection, hub
-from ..schemas import TokenDM, TokenPublic
+from ..schemas import GalleryImageOut, MapDM, MapPublic, TokenDM, TokenPublic
 from ..security import decode_access_token
 
 router = APIRouter(tags=["realtime"])
+
+
+def build_snapshot(db: Session, campaign: Campaign, is_dm: bool) -> dict:
+    """Role-filtered 'here is the current board' message sent right after connect.
+
+    Uses the same filtering as live events, so a reconnecting player can never
+    see more than they could live (no hidden tokens, revealed fog only).
+    """
+    data: dict = {"type": "state", "map": None, "tokens": [], "active_image": None}
+
+    if campaign.active_map_id:
+        m = db.get(Map, campaign.active_map_id)
+        if m:
+            if is_dm:
+                data["map"] = MapDM.model_validate(m).model_dump(mode="json")
+                toks = db.scalars(select(Token).where(Token.map_id == m.id).order_by(Token.z_index)).all()
+                data["tokens"] = [TokenDM.model_validate(t).model_dump(mode="json") for t in toks]
+            else:
+                mp = MapPublic.model_validate(m).model_dump(mode="json")
+                mp["fog"] = {"revealed": (m.fog or {}).get("revealed", [])}
+                data["map"] = mp
+                toks = db.scalars(
+                    select(Token).where(Token.map_id == m.id, Token.hidden_from_players.is_(False)).order_by(Token.z_index)
+                ).all()
+                data["tokens"] = [TokenPublic.model_validate(t).model_dump(mode="json") for t in toks]
+
+    if campaign.active_image_id:
+        img = db.get(GalleryImage, campaign.active_image_id)
+        if img:
+            data["active_image"] = GalleryImageOut.model_validate(img).model_dump(mode="json")
+
+    return data
 
 
 @router.websocket("/ws/dm")
@@ -38,15 +72,20 @@ async def dm_socket(websocket: WebSocket, campaign_id: uuid.UUID, token: str = Q
         if not user or not campaign or campaign.owner_id != user.id:
             await websocket.close(code=4403)
             return
+        dm_name = user.display_name
+        snapshot = build_snapshot(db, campaign, is_dm=True)
 
-    conn = Connection(ws=websocket, is_dm=True)
+    conn = Connection(ws=websocket, is_dm=True, name=dm_name, color="#f0c060")
     await hub.connect(campaign_id, conn)
+    await websocket.send_json(snapshot)
+    await hub.broadcast_presence(campaign_id)
     try:
         await _pump(campaign_id, conn)
     except WebSocketDisconnect:
         pass
     finally:
         await hub.disconnect(campaign_id, conn)
+        await hub.broadcast_presence(campaign_id)
 
 
 @router.websocket("/ws/player")
@@ -61,15 +100,24 @@ async def player_socket(websocket: WebSocket, share_token: str = Query(...)):
             return
         campaign_id = link.campaign_id
         seat_id = link.seat_id
+        seat_name = None
+        if seat_id:
+            seat = db.get(PlayerSeat, seat_id)
+            seat_name = seat.name if seat else None
+        campaign = db.get(Campaign, campaign_id)
+        snapshot = build_snapshot(db, campaign, is_dm=False)
 
-    conn = Connection(ws=websocket, is_dm=False, seat_id=seat_id)
+    conn = Connection(ws=websocket, is_dm=False, seat_id=seat_id, name=seat_name or "Player")
     await hub.connect(campaign_id, conn)
+    await websocket.send_json(snapshot)
+    await hub.broadcast_presence(campaign_id)
     try:
         await _pump(campaign_id, conn)
     except WebSocketDisconnect:
         pass
     finally:
         await hub.disconnect(campaign_id, conn)
+        await hub.broadcast_presence(campaign_id)
 
 
 async def _pump(campaign_id: uuid.UUID, conn: Connection) -> None:
@@ -81,6 +129,16 @@ async def _pump(campaign_id: uuid.UUID, conn: Connection) -> None:
         if mtype == "ping":
             # Transient pointer ping — broadcast to everyone.
             await hub.broadcast(campaign_id, {"type": "ping", "x": msg.get("x"), "y": msg.get("y")})
+
+        elif mtype == "presence":
+            # A viewer set their display name / color.
+            name = msg.get("name")
+            if isinstance(name, str) and name.strip():
+                conn.name = name.strip()[:120]
+            color = msg.get("color")
+            if isinstance(color, str):
+                conn.color = color[:32]
+            await hub.broadcast_presence(campaign_id)
 
         elif mtype == "token_move":
             await _handle_token_move(campaign_id, conn, msg)

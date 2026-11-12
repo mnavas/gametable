@@ -18,6 +18,8 @@ class Connection:
     ws: WebSocket
     is_dm: bool
     seat_id: uuid.UUID | None = None
+    name: str = "Player"
+    color: str = "#8aa0ff"
 
 
 @dataclass
@@ -75,6 +77,18 @@ class Hub:
                 dead.append(conn)
         for conn in dead:
             await self.disconnect(campaign_id, conn)
+
+    def presence(self, campaign_id: uuid.UUID) -> list[dict]:
+        room = self._rooms.get(campaign_id)
+        if not room:
+            return []
+        return [
+            {"is_dm": c.is_dm, "name": c.name, "color": c.color, "seat_id": str(c.seat_id) if c.seat_id else None}
+            for c in room.connections
+        ]
+
+    async def broadcast_presence(self, campaign_id: uuid.UUID) -> None:
+        await self.broadcast(campaign_id, {"type": "presence", "viewers": self.presence(campaign_id)})
 
 
 hub = Hub()

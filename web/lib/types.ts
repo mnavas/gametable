@@ -115,6 +115,13 @@ export interface GalleryImage {
   created_at: string;
 }
 
+export interface Viewer {
+  is_dm: boolean;
+  name: string;
+  color: string;
+  seat_id: string | null;
+}
+
 export interface PlayerState {
   campaign_name: string;
   active_map: GameMap | null;
