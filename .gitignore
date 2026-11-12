@@ -20,6 +20,7 @@ web/.next/
 web/out/
 web/build/
 npm-debug.log*
+*.tsbuildinfo
 
 # Media / uploads (local dev)
 media/

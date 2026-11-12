@@ -116,6 +116,13 @@ def revoke_share_link(
 
 # --- Dice (DM) --------------------------------------------------------------
 
+@router.get("/{campaign_id}/dice", response_model=list[DiceRollOut])
+def dm_dice_log(campaign: Campaign = Depends(get_owned_campaign), db: Session = Depends(get_db)):
+    return db.scalars(
+        select(DiceRoll).where(DiceRoll.campaign_id == campaign.id).order_by(DiceRoll.created_at.desc()).limit(100)
+    ).all()
+
+
 @router.post("/{campaign_id}/roll", response_model=DiceRollOut)
 async def dm_roll(
     payload: RollRequest,
