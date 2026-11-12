@@ -7,14 +7,18 @@ campaign through a share link (no account needed), see the fog-obscured map with
 tokens, click tokens for public info, view handouts the DM pushes, and roll dice in a
 shared log (publicly or silently).
 
+**Website:** https://mnavas.github.io/gametable/ · **Docs:** [installation](docs/installation.md)
+· [DM guide](docs/dm-guide.md) · [player guide](docs/player-guide.md) · [architecture](docs/architecture.md)
+
 See [REQUIREMENTS.md](REQUIREMENTS.md) for the full feature spec, domain model,
-permissions matrix, proposed stack, and phased roadmap.
+permissions matrix, stack, and roadmap.
 
 ## Status
 
-Early scaffold. Requirements drafted; backend/web skeleton in place (auth,
-campaigns, share links, dice, WebSocket gate). Maps/tokens/creatures/notes/gallery
-routers and the map canvas are the next slices.
+Working app. Backend (auth, campaigns, maps + fog, tokens, creatures with
+public/hidden stats & images, notes, gallery handouts, share links, dice,
+WebSocket snapshot + presence) and web client (DM dashboard, map canvas, creature
+editor, player view) are built and tested; schema managed by Alembic.
 
 ## Stack
 
@@ -52,10 +56,16 @@ backend/            FastAPI service
     security.py     argon2 hashing, JWT, share tokens, dice roller
     deps.py         DM auth + share-token (player) access gates
     realtime.py     WebSocket hub — per-campaign fan-out + permission filter
-    routers/        auth, campaigns (+share links, dice), ws
-web/                Next.js (TypeScript) stub — tabletop canvas goes here
-docs/
-  WEBSOCKET_PROTOCOL.md   Live sync message contract
+    storage.py      Public vs protected (DM-only) media buckets
+    routers/        auth, campaigns, maps, tokens, creatures, notes, gallery,
+                    player, uploads, ws
+    alembic/        Database migrations
+web/                Next.js (TypeScript) app
+  lib/              api.ts, useWS.ts, types.ts
+  components/       TableCanvas, DicePanel, CreatureEditor
+  app/              login, register, campaigns/[id] (DM), play/[token] (player)
+docs/               installation, dm-guide, player-guide, architecture, protocol
+index.html          Landing page (GitHub Pages)
 ```
 
 ## Highlights
@@ -67,3 +77,22 @@ docs/
 - Player share link → player view (map mode + handout/gallery mode)
 - Shared dice roller with public and private/silent rolls
 - Live WebSocket sync with server-side permission filtering
+
+## Documentation
+
+- [Installation & self-hosting](docs/installation.md) — Docker, env, LAN/internet, backups
+- [DM guide](docs/dm-guide.md) — run a session end to end
+- [Player guide](docs/player-guide.md) — joining via the share link
+- [Architecture](docs/architecture.md) and [WebSocket protocol](docs/WEBSOCKET_PROTOCOL.md) — for contributors
+- [REQUIREMENTS.md](REQUIREMENTS.md) — full product spec
+
+## Support
+
+GameTable is a free, open-source side project. If it helps your group, you can
+support it via [GitHub Sponsors](https://github.com/sponsors/mnavas),
+[PayPal](https://paypal.me/warionv), or the De Una QR on the
+[website](https://mnavas.github.io/gametable/#support).
+
+## License
+
+[MIT](LICENSE).
