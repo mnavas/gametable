@@ -4,8 +4,9 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import CreatureEditor from "../../../components/CreatureEditor";
 import DicePanel from "../../../components/DicePanel";
-import { api, getToken, mediaUrl } from "../../../lib/api";
+import { api, getToken } from "../../../lib/api";
 import type { Campaign, Creature, DiceRoll, GalleryImage, GameMap, Token } from "../../../lib/types";
 import { dmSocketUrl, useWS, type WSMessage } from "../../../lib/useWS";
 
@@ -42,6 +43,7 @@ export default function DMSessionPage() {
   const [rolls, setRolls] = useState<DiceRoll[]>([]);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [fogMode, setFogMode] = useState(false);
+  const [editingCreature, setEditingCreature] = useState<Creature | null>(null);
 
   const creatureById = useMemo(() => new Map(creatures.map((c) => [c.id, c])), [creatures]);
   const jwt = getToken();
@@ -185,7 +187,14 @@ export default function DMSessionPage() {
           <CreatureCreator campaignId={campaignId} onCreated={(c) => setCreatures((p) => [...p, c])} />
           {creatures.map((cr) => (
             <div key={cr.id} style={rowBtn}>
-              <span>{cr.name}</span>
+              <span
+                onClick={() => setEditingCreature(cr)}
+                style={{ cursor: "pointer", flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}
+                title="Edit stats & images"
+              >
+                {cr.token_image_path ? "🖼 " : ""}{cr.name}
+                {cr.visibility === "hidden" && <span title="DM-only" style={{ opacity: 0.6 }}> 🔒</span>}
+              </span>
               <button onClick={() => addToken(cr)} disabled={!activeMap} style={miniBtn} title="Place on map">
                 ＋
               </button>
@@ -256,6 +265,23 @@ export default function DMSessionPage() {
           Private (🤫) rolls are shown only to you. Click a token on the map to toggle it hidden from players.
         </p>
       </aside>
+
+      {editingCreature && (
+        <CreatureEditor
+          creature={editingCreature}
+          onClose={() => setEditingCreature(null)}
+          onChange={(u) => {
+            setCreatures((prev) => prev.map((c) => (c.id === u.id ? u : c)));
+            setEditingCreature(u);
+            setTokens((prev) => [...prev]); // nudge canvas to pick up new token art
+          }}
+          onDelete={(id) => {
+            api.deleteCreature(id);
+            setCreatures((prev) => prev.filter((c) => c.id !== id));
+            setTokens((prev) => prev.map((t) => (t.creature_id === id ? { ...t, creature_id: null } : t)));
+          }}
+        />
+      )}
     </div>
   );
 }

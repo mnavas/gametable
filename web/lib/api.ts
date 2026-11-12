@@ -125,6 +125,9 @@ export const api = {
   listCreatures: (campaignId: string) => request<Creature[]>(`/campaigns/${campaignId}/creatures`),
   createCreature: (campaignId: string, data: Partial<Creature>) =>
     request<Creature>(`/campaigns/${campaignId}/creatures`, { method: "POST", body: JSON.stringify(data) }),
+  updateCreature: (creatureId: string, data: Partial<Creature>) =>
+    request<Creature>(`/creatures/${creatureId}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteCreature: (creatureId: string) => request<void>(`/creatures/${creatureId}`, { method: "DELETE" }),
   uploadCreatureImage: (creatureId: string, kind: "token" | "display" | "hidden", file: File) => {
     const fd = new FormData();
     fd.append("file", file);
