@@ -103,11 +103,15 @@ class Campaign(Base):
     description: Mapped[str] = mapped_column(Text, default="", nullable=False)
 
     # The scene players currently see, and the handout currently pushed (if any).
+    # use_alter: these create a cycle with maps/gallery_images, so the FK is added
+    # via ALTER after both tables exist (keeps Alembic migrations orderable).
     active_map_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("maps.id", ondelete="SET NULL"), nullable=True
+        ForeignKey("maps.id", ondelete="SET NULL", use_alter=True, name="fk_campaigns_active_map"),
+        nullable=True,
     )
     active_image_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("gallery_images.id", ondelete="SET NULL"), nullable=True
+        ForeignKey("gallery_images.id", ondelete="SET NULL", use_alter=True, name="fk_campaigns_active_image"),
+        nullable=True,
     )
 
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

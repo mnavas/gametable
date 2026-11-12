@@ -9,7 +9,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
-from .database import init_db
 from .routers import (
     auth,
     campaigns,
@@ -28,8 +27,8 @@ PUBLIC_MEDIA_DIR = os.path.join(settings.media_dir, "public")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # v0 dev bootstrap. Replace with Alembic migrations for real deployments.
-    init_db()
+    # Schema is managed by Alembic: run `alembic upgrade head` before starting
+    # (docker-compose does this automatically). We only ensure media dirs here.
     os.makedirs(PUBLIC_MEDIA_DIR, exist_ok=True)
     os.makedirs(os.path.join(settings.media_dir, "protected"), exist_ok=True)
     yield

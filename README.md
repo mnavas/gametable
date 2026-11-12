@@ -32,8 +32,14 @@ docker compose up --build     # db :5433, api :8001, web :3000
 - Web stub: http://localhost:3000 (shows API health)
 - First registered account becomes the server admin.
 
-The API uses `Base.metadata.create_all` as a v0 bootstrap; switch to Alembic
-migrations before storing real data (see REQUIREMENTS §7).
+The schema is managed by **Alembic**; `docker compose` runs `alembic upgrade head`
+before the API starts. For a non-Docker run, apply migrations first:
+
+```bash
+cd backend
+DATABASE_URL=postgresql+psycopg://gametable:gametable@localhost:5433/gametable \
+  alembic upgrade head
+```
 
 ## Layout
 
