@@ -10,9 +10,6 @@ shared log (publicly or silently).
 **Website:** https://mnavas.github.io/gametable/ · **Docs:** [installation](docs/installation.md)
 · [DM guide](docs/dm-guide.md) · [player guide](docs/player-guide.md) · [architecture](docs/architecture.md)
 
-See [REQUIREMENTS.md](REQUIREMENTS.md) for the full feature spec, domain model,
-permissions matrix, stack, and roadmap.
-
 ## Status
 
 Working app. Backend (auth, campaigns, maps + fog, tokens, creatures with
@@ -84,7 +81,6 @@ index.html          Landing page (GitHub Pages)
 - [DM guide](docs/dm-guide.md) — run a session end to end
 - [Player guide](docs/player-guide.md) — joining via the share link
 - [Architecture](docs/architecture.md) and [WebSocket protocol](docs/WEBSOCKET_PROTOCOL.md) — for contributors
-- [REQUIREMENTS.md](REQUIREMENTS.md) — full product spec
 
 ## Support
 

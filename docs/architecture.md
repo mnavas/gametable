@@ -1,8 +1,7 @@
 # Architecture
 
-A map of how GameTable is put together, for contributors. For the full product spec
-see [REQUIREMENTS.md](../REQUIREMENTS.md); for the live-sync message contract see
-[WEBSOCKET_PROTOCOL.md](WEBSOCKET_PROTOCOL.md).
+A map of how GameTable is put together, for contributors. For the live-sync message
+contract see [WEBSOCKET_PROTOCOL.md](WEBSOCKET_PROTOCOL.md).
 
 ---
 

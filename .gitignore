@@ -1,3 +1,6 @@
+# Internal / private — dev plans, roadmap, requirements, per-version notes (not public)
+versioning/
+
 # Env / secrets
 .env
 *.env
