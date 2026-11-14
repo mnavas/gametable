@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from .config import settings
 from .routers import (
     auth,
+    bundle,
     campaigns,
     creatures,
     gallery,
@@ -46,6 +47,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(campaigns.router)
+app.include_router(bundle.router)
 app.include_router(maps.router)
 app.include_router(tokens.router)
 app.include_router(creatures.router)

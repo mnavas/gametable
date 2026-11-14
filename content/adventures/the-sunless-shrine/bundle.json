@@ -1,0 +1,331 @@
+{
+  "format": "gametable-bundle",
+  "version": 1,
+  "generator": "GameTable",
+  "license": "CC BY 4.0. Includes material from SRD 5.1 by Wizards of the Coast LLC (CC BY 4.0). See the 'Credits & License' note and NOTICE.md.",
+  "campaign": {
+    "name": "The Sunless Shrine (one-shot)",
+    "description": "A free CC BY 4.0 Dungeons & Dragons 5e one-shot for four 2nd-level characters. Put out a dead sun's cold fire before the blight reaches the valley. Maps, tokens, handouts, SRD stat blocks, and full DM notes included. Import it and run it."
+  },
+  "creatures": [
+    {
+      "key": "giant-rat",
+      "name": "Giant Rat",
+      "type": "creature",
+      "visibility": "campaign_public",
+      "public_stats": "A dog-sized rat with yellow teeth and matted fur. They swarm where the dead are left to rot.",
+      "hidden_stats": "GIANT RAT — SRD 5.1 (CR 1/8)\nAC 12 · HP 7 (2d6) · Speed 30 ft.\nSTR 7 (-2) DEX 15 (+2) CON 11 (+0) INT 2 (-4) WIS 10 (+0) CHA 4 (-3)\nKeen Smell: advantage on Perception (smell).\nPack Tactics: advantage to hit if an ally is within 5 ft of the target.\nBite: +4 to hit, 1d4+2 piercing.\nTactics: they fight only while they outnumber the party; scatter if two fall.",
+      "token_image": "tokens/giant-rat.png",
+      "display_image": null,
+      "hidden_image": null
+    },
+    {
+      "key": "stirge",
+      "name": "Stirge",
+      "type": "creature",
+      "visibility": "campaign_public",
+      "public_stats": "A bat-sized mosquito-thing with a needle proboscis. It drops from the dark, latches on, and drinks.",
+      "hidden_stats": "STIRGE — SRD 5.1 (CR 1/8)\nAC 14 · HP 2 (1d4) · Speed 10 ft, fly 40 ft.\nSTR 4 (-3) DEX 16 (+3) CON 11 (+0) INT 2 (-4) WIS 8 (-1) CHA 6 (-2)\nBlood Drain: +5 to hit, 1d4+3 piercing, and it attaches. While attached it does no more attacks but drains 1d4+3 blood at the start of each of its turns. After draining 10 hp of blood it detaches and flies off. A creature can detach it with a DC 10 action.",
+      "token_image": "tokens/stirge.png",
+      "display_image": null,
+      "hidden_image": null
+    },
+    {
+      "key": "giant-spider",
+      "name": "Giant Spider",
+      "type": "creature",
+      "visibility": "campaign_public",
+      "public_stats": "A pale, hand-span-eyed spider the size of a pony, picking across its own webs with awful patience.",
+      "hidden_stats": "GIANT SPIDER — SRD 5.1 (CR 1)\nAC 14 · HP 26 (4d10+4) · Speed 30 ft, climb 30 ft.\nSTR 14 (+2) DEX 16 (+3) CON 12 (+1) INT 2 (-4) WIS 11 (+0) CHA 4 (-3)\nSpider Climb; Web Walker (ignores movement restriction from webs).\nBite: +5 to hit, 1d8+3 piercing, plus DC 11 CON save or 2d8 poison (half on success); if this reduces the target to 0 hp it is stable but poisoned & paralyzed for 1 hour.\nWeb (Recharge 5-6): ranged +5, range 30/60 ft, Large or smaller target restrained by webbing (DC 12 STR to break free; the web is AC 10, 5 hp, vulnerable to fire).",
+      "token_image": "tokens/giant-spider.png",
+      "display_image": "portraits/giant-spider.png",
+      "hidden_image": null
+    },
+    {
+      "key": "skeleton",
+      "name": "Skeleton",
+      "type": "creature",
+      "visibility": "campaign_public",
+      "public_stats": "Bound bones in rusted scraps of armor. Its eye sockets hold two points of the shrine's green light.",
+      "hidden_stats": "SKELETON — SRD 5.1 (CR 1/4)\nAC 13 (armor scraps) · HP 13 (2d8+4) · Speed 30 ft.\nSTR 10 (+0) DEX 14 (+2) CON 15 (+2) INT 6 (-2) WIS 8 (-1) CHA 5 (-3)\nVulnerable: bludgeoning. Immune: poison. Condition immunities: exhaustion, poisoned.\nShortsword: +4 to hit, 1d6+2 piercing.\nShortbow: +4 to hit, range 80/320, 1d6+2 piercing.\nTactics: they obey the Keeper's last command without fear or sense. Smashing weapons (maces, staves) hurt most.",
+      "token_image": "tokens/skeleton.png",
+      "display_image": null,
+      "hidden_image": null
+    },
+    {
+      "key": "cult-fanatic",
+      "name": "Keeper of the Sunless Flame",
+      "type": "npc",
+      "visibility": "campaign_public",
+      "public_stats": "A hooded figure kneeling at the dead-sun altar, murmuring to a light that gives no warmth.",
+      "hidden_stats": "KEEPER OF THE SUNLESS FLAME — reskinned CULT FANATIC, SRD 5.1 (CR 2)\nAC 13 (leather) · HP 33 (6d8+6) · Speed 30 ft.\nSTR 11 (+0) DEX 14 (+2) CON 12 (+1) INT 10 (+0) WIS 13 (+1) CHA 14 (+2)\nDark Devotion: advantage vs charmed and frightened.\nMultiattack: two melee attacks.\nDagger: +4 to hit, 1d4+2 piercing.\nSpellcasting (4th level, save DC 11, +3 to hit):\n  Cantrips: light, sacred flame, thaumaturgy\n  1st (4 slots): command, inflict wounds, shield of faith\n  2nd (3 slots): hold person, spiritual weapon\nOpening tactics: shield of faith on itself, spiritual weapon (the green flame takes a clawed shape), then hold person on the party's heaviest hitter. Uses inflict wounds when cornered. If reduced below 10 hp it tries to plunge a hand into the altar (see Area 5) rather than surrender.",
+      "token_image": "tokens/cult-fanatic.png",
+      "display_image": "portraits/cult-fanatic.png",
+      "hidden_image": "secret/cult-fanatic-true.png"
+    },
+    {
+      "key": "pc-fighter",
+      "name": "Fighter (pre-gen)",
+      "type": "player",
+      "visibility": "campaign_public",
+      "public_stats": "A ready-to-play 2nd-level fighter. Swap this token for your own character, or run it as a pre-gen.",
+      "hidden_stats": "",
+      "token_image": "tokens/pc-fighter.png",
+      "display_image": null,
+      "hidden_image": null
+    },
+    {
+      "key": "pc-cleric",
+      "name": "Cleric (pre-gen)",
+      "type": "player",
+      "visibility": "campaign_public",
+      "public_stats": "A ready-to-play 2nd-level cleric. Swap this token for your own character, or run it as a pre-gen.",
+      "hidden_stats": "",
+      "token_image": "tokens/pc-cleric.png",
+      "display_image": null,
+      "hidden_image": null
+    },
+    {
+      "key": "pc-rogue",
+      "name": "Rogue (pre-gen)",
+      "type": "player",
+      "visibility": "campaign_public",
+      "public_stats": "A ready-to-play 2nd-level rogue. Swap this token for your own character, or run it as a pre-gen.",
+      "hidden_stats": "",
+      "token_image": "tokens/pc-rogue.png",
+      "display_image": null,
+      "hidden_image": null
+    },
+    {
+      "key": "pc-wizard",
+      "name": "Wizard (pre-gen)",
+      "type": "player",
+      "visibility": "campaign_public",
+      "public_stats": "A ready-to-play 2nd-level wizard. Swap this token for your own character, or run it as a pre-gen.",
+      "hidden_stats": "",
+      "token_image": "tokens/pc-wizard.png",
+      "display_image": null,
+      "hidden_image": null
+    }
+  ],
+  "maps": [
+    {
+      "name": "The Sunless Shrine",
+      "image": "maps/sunless-shrine.png",
+      "width": 2100,
+      "height": 1540,
+      "active": true,
+      "grid": {
+        "type": "square",
+        "size": 70,
+        "offset_x": 0,
+        "offset_y": 0,
+        "color": "#2a2d36",
+        "unit_per_cell": 5
+      },
+      "fog": {
+        "revealed": [],
+        "hidden": []
+      },
+      "tokens": [
+        {
+          "creature": "pc-fighter",
+          "label": "Fighter",
+          "x": 175,
+          "y": 175,
+          "size": 1,
+          "color": "#9e3a30",
+          "hidden_from_players": false
+        },
+        {
+          "creature": "pc-cleric",
+          "label": "Cleric",
+          "x": 245,
+          "y": 175,
+          "size": 1,
+          "color": "#cbb456",
+          "hidden_from_players": false
+        },
+        {
+          "creature": "pc-rogue",
+          "label": "Rogue",
+          "x": 175,
+          "y": 245,
+          "size": 1,
+          "color": "#3a6848",
+          "hidden_from_players": false
+        },
+        {
+          "creature": "pc-wizard",
+          "label": "Wizard",
+          "x": 245,
+          "y": 245,
+          "size": 1,
+          "color": "#405296",
+          "hidden_from_players": false
+        },
+        {
+          "creature": "giant-rat",
+          "label": "Rat A",
+          "x": 665,
+          "y": 175,
+          "size": 1,
+          "color": "#5c4a30",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "giant-rat",
+          "label": "Rat B",
+          "x": 735,
+          "y": 245,
+          "size": 1,
+          "color": "#5c4a30",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "giant-rat",
+          "label": "Rat C",
+          "x": 805,
+          "y": 175,
+          "size": 1,
+          "color": "#5c4a30",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "stirge",
+          "label": "Stirge",
+          "x": 875,
+          "y": 175,
+          "size": 1,
+          "color": "#8a4a6a",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "giant-spider",
+          "label": "Gallery Spider",
+          "x": 245,
+          "y": 735,
+          "size": 2,
+          "color": "#2a2e36",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "skeleton",
+          "label": "Skeleton 1",
+          "x": 875,
+          "y": 735,
+          "size": 1,
+          "color": "#8c887a",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "skeleton",
+          "label": "Skeleton 2",
+          "x": 1015,
+          "y": 665,
+          "size": 1,
+          "color": "#8c887a",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "skeleton",
+          "label": "Skeleton 3",
+          "x": 1085,
+          "y": 805,
+          "size": 1,
+          "color": "#8c887a",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "cult-fanatic",
+          "label": "The Keeper",
+          "x": 1715,
+          "y": 805,
+          "size": 1,
+          "color": "#96e696",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "skeleton",
+          "label": "Altar Guard L",
+          "x": 1575,
+          "y": 595,
+          "size": 1,
+          "color": "#8c887a",
+          "hidden_from_players": true
+        },
+        {
+          "creature": "skeleton",
+          "label": "Altar Guard R",
+          "x": 1855,
+          "y": 875,
+          "size": 1,
+          "color": "#8c887a",
+          "hidden_from_players": true
+        }
+      ]
+    }
+  ],
+  "notes": [
+    {
+      "title": "① Start Here — Running the One-Shot",
+      "visibility": "hidden",
+      "sort_order": 0,
+      "body": "THE SUNLESS SHRINE — a 2-3 hour Dungeons & Dragons 5e one-shot for four 2nd-level characters.\n\nPREMISE: Under a hill the locals won't name, a buried shrine once held a 'morning stone' that kept the dark out. A small cult found it, and in trying to wake an older, colder power they snuffed the stone's light. Now a sickly green 'sunless flame' burns on the altar, the shrine's dead rise, and the blight is creeping toward the valley. The party is sent (or lured) down to put the light out.\n\nHOOK (pick one): a missing sibling followed the cult down; the village well has gone black and bitter; a dying scholar pays the party to recover the morning stone.\n\nRUNNING IT IN GAMETABLE:\n- The map 'The Sunless Shrine' is set as the active scene. Fog starts covering everything — use the reveal tool to open each room as the party enters it.\n- Monster tokens are hidden from players by default. Un-hide a token (click it) the moment that encounter begins so it pops onto the players' screen.\n- Players click a creature's token to see its public description; the full SRD stat block is in the creature's DM-only notes (hidden stats), which only you can see.\n- Two handouts are in the Gallery: the 'Explorer's Map' (hand it out once they've mapped the place) and the 'Warning Glyph' (show it when they reach the shrine door). Push a handout to swap the players' view from the map to the image.\n\nSCALING: For four 1st-level PCs, cut the Hall of Bones to two skeletons and give the Keeper 24 hp. For 4th-level PCs, double every group and let the Keeper start with spiritual weapon already up.\n\nTONE: quiet, cold, and wrong. The deeper they go, the less sound carries."
+    },
+    {
+      "title": "② Areas 1-2: The Descent & the Warren",
+      "visibility": "hidden",
+      "sort_order": 1,
+      "body": "AREA 1 — THE DESCENT (entrance stair)\nRead aloud: 'Worn steps fall away into cold air that smells of wet stone and old meat. Far below, something glows the green of a drowned lantern.'\nNo encounter. A successful DC 12 Wisdom (Perception) spots claw-scratches on the steps leading DOWN — something has been dragging the dead this way.\n\nAREA 2 — THE WARREN\nThree GIANT RATS and one STIRGE have nested in a collapsed side-hall. The rats rush; the stirge waits for someone to stand still, then drops. Easy fight to warm up the table.\nTreasure: in the rubble, a DC 10 Investigation finds a damp belt-pouch — 11 gp, a greenish silver ring (25 gp), and a child's wooden sun-charm (a hook back to the village)."
+    },
+    {
+      "title": "③ Area 3: The Webbed Gallery",
+      "visibility": "hidden",
+      "sort_order": 2,
+      "body": "AREA 3 — THE WEBBED GALLERY\nRead aloud: 'Grey webbing fills this old statue-gallery wall to wall. The carved faces behind it have all been wrapped, like the spider was trying to blind them.'\nOne GIANT SPIDER hunts here (it climbs the walls/ceiling — remember Spider Climb). Moving through a web-choked square costs double movement unless you have Web Walker. The spider opens with Web (restrain the back-rank caster), then bites the restrained target.\nClue: wrapped against the far wall is a HALF-EATEN CULTIST. A DC 10 Investigation of the body turns up the Warning Glyph note (show the 'Warning Glyph' handout) and a line of scripture: 'Let the cold sun keep what the warm one spent.' This is the password the skeletons in Area 4 will not attack anyone who speaks."
+    },
+    {
+      "title": "④ Area 4: The Hall of Bones",
+      "visibility": "hidden",
+      "sort_order": 3,
+      "body": "AREA 4 — THE HALL OF BONES\nRead aloud: 'The floor is a carpet of bones, picked clean and sorted — skulls to one side, long bones to the other. Three skeletons stand among them, utterly still, facing the far door.'\nThree SKELETONS stand guard. If a character speaks the scripture from Area 3 ('Let the cold sun keep what the warm one spent'), the skeletons let the party PASS without a fight — but turn hostile the instant anyone attacks the Keeper in Area 5. Otherwise they attack on sight (bows first, then blades).\nRemember: skeletons are VULNERABLE to bludgeoning — reward players who switch to maces, staves, or a shove into the flooded crypt.\nExits: the east door to the Shrine (Area 5); a narrow stair south to the Flooded Crypt (Area 6)."
+    },
+    {
+      "title": "⑤ Area 5: The Sunless Shrine (climax)",
+      "visibility": "hidden",
+      "sort_order": 4,
+      "body": "AREA 5 — THE SUNLESS SHRINE\nRead aloud: 'A broad round chamber. On a black altar sits a disc of iron where a sun is carved — and from its centre pours a cold green fire that lights everything and warms nothing. A hooded figure kneels before it, and does not turn around.'\nThe KEEPER OF THE SUNLESS FLAME (reskinned Cult Fanatic) is flanked by two SKELETON altar guards. See the Keeper's hidden stats for the spell tactics. Pull up the Keeper's DM-only image ('A Hollow Thing') to show the party what's under the hood if they unmask it.\n\nTHE ALTAR / WIN CONDITION: the 'morning stone' is still inside the iron disc, smothered. A character adjacent to the altar can try to RELIGHT it as an action: DC 13 using Wisdom, Intelligence (Religion), or by burning a spell slot of 1st level or higher as fuel. Three successes (by anyone, across rounds) reignites the morning stone: the green flame gutters out, every skeleton collapses, and the Keeper is blinded and frightened until the end of its next turn. Relighting the stone is the adventure's true victory — a party can WIN by protecting the person at the altar rather than by dropping the Keeper.\nIf the Keeper dies before the stone is lit, the flame flares and all remaining skeletons get one last attack at advantage before falling."
+    },
+    {
+      "title": "⑥ Area 6: The Flooded Crypt (optional)",
+      "visibility": "hidden",
+      "sort_order": 5,
+      "body": "AREA 6 — THE FLOODED CRYPT (optional)\nBlack water, knee to waist deep. The cult dumped what they couldn't use down here. No fixed encounter, but if the party is steamrolling, a lone STIRGE or a stray SKELETON can wade out of the dark.\nTreasure (DC 12 Investigation, or just wading in): a sealed clay jar holding a POTION OF HEALING (2d4+2) and a waterlogged prayer book; and, pinned under a slab, an OLD +1 MACE etched with a rising sun — perfect for finishing the skeletons, and a nice souvenir of the dungeon's one bright idea."
+    },
+    {
+      "title": "⑦ Rewards & Wrap-up",
+      "visibility": "hidden",
+      "sort_order": 6,
+      "body": "TREASURE SUMMARY\n- Warren: 11 gp, silver ring (25 gp), wooden sun-charm.\n- Crypt: Potion of Healing; +1 Mace (rising-sun).\n- The Keeper: an iron holy symbol of the sunless flame (worth 50 gp to the right buyer, cursed-feeling to everyone else) and the key fact that it was taking orders from something still asleep deeper down — your sequel hook.\n\nENDING: if the morning stone is relit, the hill's blight recedes within a day and the well runs clear. If the party only killed the Keeper and left the flame burning, they win the fight but the valley keeps dimming — come back next session.\n\nXP: roughly 700-900 XP of monsters; enough to carry four PCs from 2nd toward 3rd level in a single sitting."
+    },
+    {
+      "title": "Credits & License (CC BY 4.0)",
+      "visibility": "public",
+      "sort_order": 7,
+      "body": "THE SUNLESS SHRINE — a free one-shot for GameTable.\n\nThis adventure's text, maps, tokens, and images are original works, released under the Creative Commons Attribution 4.0 International license (CC BY 4.0). You may copy, remix, and reuse them, including commercially, as long as you give credit.\n\nGame mechanics and the monster stat blocks (Giant Rat, Stirge, Giant Spider, Skeleton, Cult Fanatic) are from the System Reference Document 5.1 ('SRD 5.1') by Wizards of the Coast LLC, used under CC BY 4.0. The Keeper of the Sunless Flame is a reskinned SRD Cult Fanatic.\n\nRequired attribution for the SRD content:\n'This work includes material from the System Reference Document 5.1 (SRD 5.1) by Wizards of the Coast LLC, available at https://dnd.wizards.com/resources/systems-reference-document, licensed under the Creative Commons Attribution 4.0 International License: https://creativecommons.org/licenses/by/4.0/legalcode.'\n\nNot for resale as an official D&D product. GameTable and this adventure are unofficial Fan Content / compatible-with-5E material and are not affiliated with or endorsed by Wizards of the Coast."
+    }
+  ],
+  "gallery": [
+    {
+      "name": "Explorer's Map — The Sunless Shrine",
+      "image": "handouts/explorers-map.png",
+      "is_shared": false
+    },
+    {
+      "name": "The Warning Glyph",
+      "image": "handouts/warning-glyph.png",
+      "is_shared": false
+    }
+  ]
+}

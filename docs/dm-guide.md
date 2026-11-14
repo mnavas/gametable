@@ -103,6 +103,24 @@ Keep lore, plot, and session recaps as **notes**. Each note is either **hidden**
 
 See the [player guide](player-guide.md) for what your players will see.
 
+## 9. Take your game anywhere (export / import)
+
+A whole campaign — maps, fog, tokens, your creature library (hidden stats and all),
+notes, and gallery — can travel as a single `.zip` **bundle**.
+
+- **Export:** on the Campaigns page, click **⬇ Export** on a campaign. Your browser
+  downloads `that-campaign.gtbundle.zip`.
+- **Import:** click **⬆ Import bundle** and pick a `.zip`. It comes in as a brand-new
+  campaign you own — nothing else in your account is touched. Create fresh share links
+  afterwards (links and live-session data don't travel in a bundle).
+
+This is how you prep at home and run at the table: build it on your home server,
+export, and import on the laptop at game night.
+
+**Try the included one-shot:** import `content/adventures/the-sunless-shrine.zip` from
+the repo for a complete, ready-to-run adventure. You can also **hand-author** a bundle
+(or edit that one) — the layout is documented in the [bundle format](BUNDLE_FORMAT.md).
+
 ---
 
 ## Quick reference
@@ -118,3 +136,5 @@ See the [player guide](player-guide.md) for what your players will see.
 | Roll behind the screen | Dice → 🤫 |
 | Let players in | Create a share link, send the URL |
 | Kick everyone off a link | Revoke the share link |
+| Back up / move a campaign | ⬇ Export it as a `.zip` |
+| Load a campaign or adventure | ⬆ Import bundle → pick the `.zip` |

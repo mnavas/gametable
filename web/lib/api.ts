@@ -98,6 +98,35 @@ export const api = {
     request<Campaign>(`/campaigns/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   deleteCampaign: (id: string) => request<void>(`/campaigns/${id}`, { method: "DELETE" }),
 
+  // --- Bundles (export / import as a .zip) ---
+  /** Download a campaign as a .zip bundle (authorized fetch -> browser save). */
+  async exportBundle(campaignId: string): Promise<void> {
+    const headers = new Headers();
+    const token = getToken();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    const res = await fetch(`${API_URL}/campaigns/${campaignId}/export`, { headers });
+    if (!res.ok) throw new ApiError(res.status, "Export failed");
+    const blob = await res.blob();
+    const cd = res.headers.get("Content-Disposition") ?? "";
+    const m = cd.match(/filename="?([^"]+)"?/);
+    const fname = m ? m[1] : "campaign.gtbundle.zip";
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  },
+  /** Import a .zip bundle into a brand-new campaign. */
+  importBundle: (file: File, name?: string) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    if (name) fd.append("name", name);
+    return request<Campaign>("/campaigns/import", { method: "POST", body: fd });
+  },
+
   // --- Maps ---
   listMaps: (campaignId: string) => request<GameMap[]>(`/campaigns/${campaignId}/maps`),
   uploadMap: (campaignId: string, name: string, file: File, width = 0, height = 0) => {
