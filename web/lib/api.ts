@@ -1,5 +1,6 @@
 // Typed REST client for the GameTable API.
 import type {
+  BestiaryEntry,
   Campaign,
   Creature,
   DiceRoll,
@@ -174,6 +175,15 @@ export const api = {
     request<Note>(`/campaigns/${campaignId}/notes/${noteId}`, { method: "PATCH", body: JSON.stringify(data) }),
   deleteNote: (campaignId: string, noteId: string) =>
     request<void>(`/campaigns/${campaignId}/notes/${noteId}`, { method: "DELETE" }),
+
+  // --- Bestiary (cross-DM shared creature library) ---
+  listBestiary: (q?: string) =>
+    request<BestiaryEntry[]>(`/bestiary${q && q.trim() ? `?q=${encodeURIComponent(q.trim())}` : ""}`),
+  copyFromBestiary: (creatureId: string, campaignId: string) =>
+    request<Creature>(`/bestiary/${creatureId}/copy`, {
+      method: "POST",
+      body: JSON.stringify({ campaign_id: campaignId }),
+    }),
 
   // --- Dice ---
   dmRoll: (campaignId: string, formula: string, visibility: string) =>

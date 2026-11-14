@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 from .config import settings
 from .routers import (
     auth,
+    bestiary,
     bundle,
     campaigns,
     creatures,
@@ -52,6 +53,7 @@ app.include_router(bundle.router)
 app.include_router(maps.router)
 app.include_router(tokens.router)
 app.include_router(creatures.router)
+app.include_router(bestiary.router)
 app.include_router(notes.router)
 app.include_router(gallery.router)
 app.include_router(seats.router)
@@ -70,6 +72,5 @@ def health():
     return {"status": "ok", "service": "gametable-api", "version": app.version}
 
 
-# Remaining work: Alembic migrations (replace create_all), presence/snapshot on
-# WS connect, richer fog geometry, server-shared bestiary copy, and the web client
-# (PixiJS map canvas, DM dashboard, player view). See REQUIREMENTS §8–§9.
+# Possible future work: richer fog geometry (server-side tiling for true fog
+# security), and a Redis-backed hub for multi-worker deployments. See REQUIREMENTS §7.

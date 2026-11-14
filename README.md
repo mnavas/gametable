@@ -55,8 +55,8 @@ backend/            FastAPI service
     realtime.py     WebSocket hub — per-campaign fan-out + permission filter
     storage.py      Public vs protected (DM-only) media buckets
     bundle.py       Export/import a campaign as a .zip (+ `python -m app.bundle pack`)
-    routers/        auth, campaigns, maps, tokens, creatures, notes, gallery,
-                    player, uploads, ws, bundle
+    routers/        auth, campaigns, maps, tokens, creatures, bestiary, notes,
+                    gallery, seats, player, uploads, ws, bundle
     alembic/        Database migrations
 web/                Next.js (TypeScript) app
   lib/              api.ts, useWS.ts, types.ts
@@ -73,6 +73,7 @@ index.html          Landing page (GitHub Pages)
 - Campaigns → maps, tokens, reusable creatures/NPCs/players, notes, gallery
 - Manual fog of war; players see only what the DM reveals
 - Public vs DM-only (hidden) creature stats and notes, enforced server-side
+- Shared **bestiary**: contribute a creature's public content for any DM to copy (hidden stats stay private)
 - Player share link → player view (map mode + handout/gallery mode)
 - Players **pick a character** from the shared link (taken ones lock out); they drag only their own token
 - Shared dice roller with public and private/silent rolls

@@ -281,6 +281,24 @@ class PlayerState(BaseModel):
     seat_id: uuid.UUID | None
 
 
+# --- Server-shared bestiary (cross-DM creature library) ---------------------
+
+class BestiaryEntry(BaseModel):
+    """A creature another DM has shared to the server. PUBLIC content only."""
+    id: uuid.UUID
+    name: str
+    type: str
+    public_stats: str
+    token_image_path: str | None = None
+    display_image_path: str | None = None
+    contributor: str          # the sharing DM's display name
+    mine: bool                # whether the requester owns the source campaign
+
+
+class BestiaryCopyRequest(BaseModel):
+    campaign_id: uuid.UUID    # one of the requester's own campaigns to copy into
+
+
 # --- Seats (players claim a character over the shared link) ------------------
 
 class SeatPublic(BaseModel):

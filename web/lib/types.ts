@@ -85,6 +85,17 @@ export interface CreaturePublic {
   public_stats: string;
 }
 
+export interface BestiaryEntry {
+  id: string;
+  name: string;
+  type: string;
+  public_stats: string;
+  token_image_path: string | null;
+  display_image_path: string | null;
+  contributor: string;
+  mine: boolean;
+}
+
 export interface Seat {
   id: string;
   name: string;

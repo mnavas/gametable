@@ -40,7 +40,9 @@ players' characters. Click a creature to open its editor, where you set:
 
 - **Name & type** (creature / NPC / player).
 - **Visibility:** *Hidden* (DM-only), *Campaign public* (players can see the public
-  parts), or *Server shared*.
+  parts), or *Server shared* (also contributes the creature's **public** content to the
+  shared bestiary every DM on this server can browse — your hidden stats and hidden image
+  stay private to you).
 - **Public stats** — rich text players see when they click the token.
 - **Hidden stats** — DM-only text (HP, tactics, secret identity). **Never sent to
   players.**
@@ -50,6 +52,13 @@ players' characters. Click a creature to open its editor, where you set:
 
 > The split is enforced on the server: hidden stats and the hidden image are never
 > delivered to a player's browser, not merely hidden in their UI.
+
+**Reuse creatures across campaigns — the shared bestiary.** Click **📚 Browse bestiary**
+in the Creatures panel to see every creature any DM has marked *Server shared*. **Add**
+one and it's copied into the current campaign (public stats and art only; its art is
+duplicated into your campaign, so it keeps working even if the original is later changed
+or removed). The copy starts with empty hidden stats — fill in your own secrets. To
+contribute, set one of your own creatures to *Server shared* in its editor.
 
 ---
 

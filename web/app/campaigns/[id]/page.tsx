@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import BestiaryBrowser from "../../../components/BestiaryBrowser";
 import CreatureEditor from "../../../components/CreatureEditor";
 import NotesEditor from "../../../components/NotesEditor";
 import DicePanel from "../../../components/DicePanel";
@@ -48,6 +49,7 @@ export default function DMSessionPage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [fogMode, setFogMode] = useState(false);
   const [editingCreature, setEditingCreature] = useState<Creature | null>(null);
+  const [showBestiary, setShowBestiary] = useState(false);
   const [viewers, setViewers] = useState<Viewer[]>([]);
 
   const creatureById = useMemo(() => new Map(creatures.map((c) => [c.id, c])), [creatures]);
@@ -217,6 +219,9 @@ export default function DMSessionPage() {
 
         <Section title="Creatures">
           <CreatureCreator campaignId={campaignId} onCreated={(c) => setCreatures((p) => [...p, c])} />
+          <button onClick={() => setShowBestiary(true)} style={{ ...rowBtn, cursor: "pointer", justifyContent: "center" }}>
+            📚 Browse bestiary
+          </button>
           {creatures.map((cr) => (
             <div key={cr.id} style={rowBtn}>
               <span
@@ -356,6 +361,14 @@ export default function DMSessionPage() {
             setCreatures((prev) => prev.filter((c) => c.id !== id));
             setTokens((prev) => prev.map((t) => (t.creature_id === id ? { ...t, creature_id: null } : t)));
           }}
+        />
+      )}
+
+      {showBestiary && (
+        <BestiaryBrowser
+          campaignId={campaignId}
+          onClose={() => setShowBestiary(false)}
+          onAdded={(c) => setCreatures((prev) => [...prev, c])}
         />
       )}
 
