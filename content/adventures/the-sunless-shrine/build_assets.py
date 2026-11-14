@@ -266,7 +266,7 @@ def warning_glyph():
 def main():
     acx, acy = draw_map()
     # Monster + PC tokens
-    token("giant-rat", "R", (92, 74, 58), (54, 42, 32))
+    token("giant-rat", "Rt", (92, 74, 58), (54, 42, 32))
     token("stirge", "S", (124, 70, 96), (72, 40, 56))
     token("giant-spider", "Sp", (46, 52, 60), (24, 28, 34), glyph_rgb=(220, 224, 230))
     token("skeleton", "Sk", (196, 192, 176), (120, 116, 104), glyph_rgb=(40, 36, 30))

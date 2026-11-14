@@ -35,6 +35,12 @@ top folder (`the-sunless-shrine/bundle.json`) — import finds it either way.
   "version": 1,                   // required
   "campaign": { "name": "…", "description": "…" },
 
+  "seats": [
+    // The table's claimable characters. A player picks one over the shared link;
+    // claim state is live and is never exported, so seats always import free.
+    { "key": "fighter", "name": "Brakka, the Fighter", "color": "#b2432f", "sort_order": 0 }
+  ],
+
   "creatures": [
     {
       "key": "goblin",            // bundle-local id; tokens reference this
@@ -61,6 +67,7 @@ top folder (`the-sunless-shrine/bundle.json`) — import finds it either way.
       "tokens": [
         {
           "creature": "goblin",   // a creature key, or null for a bare token
+          "seat": null,           // a seat key → this token is that character's (players can move it); usually set on player tokens
           "label": "Goblin A",
           "x": 665, "y": 175,     // map pixel coords (cell*size + size/2 centers it)
           "size": 1,              // in cells (a Large creature = 2)

@@ -8,7 +8,7 @@ import CreatureEditor from "../../../components/CreatureEditor";
 import NotesEditor from "../../../components/NotesEditor";
 import DicePanel from "../../../components/DicePanel";
 import { api, getToken } from "../../../lib/api";
-import type { Campaign, Creature, DiceRoll, GalleryImage, GameMap, Note, Token, Viewer } from "../../../lib/types";
+import type { Campaign, Creature, DiceRoll, GalleryImage, GameMap, Note, Seat, Token, Viewer } from "../../../lib/types";
 import { dmSocketUrl, useWS, type WSMessage } from "../../../lib/useWS";
 
 const TableCanvas = dynamic(() => import("../../../components/TableCanvas"), { ssr: false });
@@ -44,6 +44,7 @@ export default function DMSessionPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [rolls, setRolls] = useState<DiceRoll[]>([]);
+  const [seats, setSeats] = useState<Seat[]>([]);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [fogMode, setFogMode] = useState(false);
   const [editingCreature, setEditingCreature] = useState<Creature | null>(null);
@@ -63,6 +64,9 @@ export default function DMSessionPage() {
         break;
       case "presence":
         setViewers((msg.viewers as Viewer[]) ?? []);
+        break;
+      case "seats":
+        setSeats((msg.seats as Seat[]) ?? []);
         break;
       case "token_upsert":
       case "token_move": {
@@ -94,12 +98,13 @@ export default function DMSessionPage() {
     }
     (async () => {
       try {
-        const [c, ms, cr, gal, nts, dice] = await Promise.all([
+        const [c, ms, cr, gal, nts, sts, dice] = await Promise.all([
           api.getCampaign(campaignId),
           api.listMaps(campaignId),
           api.listCreatures(campaignId),
           api.listGallery(campaignId),
           api.listNotes(campaignId),
+          api.listSeats(campaignId),
           api.dmDiceLog(campaignId),
         ]);
         setCampaign(c);
@@ -107,6 +112,7 @@ export default function DMSessionPage() {
         setCreatures(cr);
         setGallery(gal);
         setNotes(nts);
+        setSeats(sts);
         setRolls(dice);
         const am = ms.find((m) => m.id === c.active_map_id) ?? null;
         if (am) await selectMap(am);
@@ -168,6 +174,11 @@ export default function DMSessionPage() {
   async function makeShareLink() {
     const link = await api.createShareLink(campaignId, "Table link");
     setShareUrl(`${window.location.origin}/play/${link.token}`);
+  }
+
+  async function resetSeat(seat: Seat) {
+    const upd = await api.resetSeat(campaignId, seat.id);
+    setSeats((prev) => prev.map((s) => (s.id === upd.id ? upd : s)));
   }
 
   async function addNote() {
@@ -304,6 +315,25 @@ export default function DMSessionPage() {
             ))
           )}
         </Section>
+        {seats.length > 0 && (
+          <Section title="Characters">
+            {seats.map((s) => (
+              <div key={s.id} style={{ ...rowBtn, cursor: "default" }}>
+                <span style={{ width: 10, height: 10, borderRadius: "50%", background: s.color, display: "inline-block" }} />
+                <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {s.name}
+                  {s.claimed && <span style={{ color: "#7fe0b0", fontSize: 12 }}> · {s.claimed_by || "taken"}</span>}
+                </span>
+                {s.claimed && (
+                  <button onClick={() => resetSeat(s)} style={miniBtn} title="Free this character">Reset</button>
+                )}
+              </div>
+            ))}
+            <p style={{ color: "#6b7280", fontSize: 12 }}>
+              Players pick a character from the share link. Drop a player-type creature on the map to add one.
+            </p>
+          </Section>
+        )}
         <Section title="Dice">
           <DicePanel rolls={rolls} onRoll={(f, v) => api.dmRoll(campaignId, f, v)} />
         </Section>

@@ -7,6 +7,32 @@
     "name": "The Sunless Shrine (one-shot)",
     "description": "A free CC BY 4.0 Dungeons & Dragons 5e one-shot for four 2nd-level characters. Put out a dead sun's cold fire before the blight reaches the valley. Maps, tokens, handouts, SRD stat blocks, and full DM notes included. Import it and run it."
   },
+  "seats": [
+    {
+      "key": "fighter",
+      "name": "Brakka, the Fighter",
+      "color": "#b2432f",
+      "sort_order": 0
+    },
+    {
+      "key": "cleric",
+      "name": "Sister Veil, the Cleric",
+      "color": "#d8b545",
+      "sort_order": 1
+    },
+    {
+      "key": "rogue",
+      "name": "Pip, the Rogue",
+      "color": "#3e8e5f",
+      "sort_order": 2
+    },
+    {
+      "key": "wizard",
+      "name": "Orin, the Wizard",
+      "color": "#4a6cc0",
+      "sort_order": 3
+    }
+  ],
   "creatures": [
     {
       "key": "giant-rat",
@@ -143,7 +169,8 @@
           "y": 175,
           "size": 1,
           "color": "#9e3a30",
-          "hidden_from_players": false
+          "hidden_from_players": false,
+          "seat": "fighter"
         },
         {
           "creature": "pc-cleric",
@@ -152,7 +179,8 @@
           "y": 175,
           "size": 1,
           "color": "#cbb456",
-          "hidden_from_players": false
+          "hidden_from_players": false,
+          "seat": "cleric"
         },
         {
           "creature": "pc-rogue",
@@ -161,7 +189,8 @@
           "y": 245,
           "size": 1,
           "color": "#3a6848",
-          "hidden_from_players": false
+          "hidden_from_players": false,
+          "seat": "rogue"
         },
         {
           "creature": "pc-wizard",
@@ -170,7 +199,8 @@
           "y": 245,
           "size": 1,
           "color": "#405296",
-          "hidden_from_players": false
+          "hidden_from_players": false,
+          "seat": "wizard"
         },
         {
           "creature": "giant-rat",
@@ -279,7 +309,7 @@
       "title": "① Start Here — Running the One-Shot",
       "visibility": "hidden",
       "sort_order": 0,
-      "body": "THE SUNLESS SHRINE — a 2-3 hour Dungeons & Dragons 5e one-shot for four 2nd-level characters.\n\nPREMISE: Under a hill the locals won't name, a buried shrine once held a 'morning stone' that kept the dark out. A small cult found it, and in trying to wake an older, colder power they snuffed the stone's light. Now a sickly green 'sunless flame' burns on the altar, the shrine's dead rise, and the blight is creeping toward the valley. The party is sent (or lured) down to put the light out.\n\nHOOK (pick one): a missing sibling followed the cult down; the village well has gone black and bitter; a dying scholar pays the party to recover the morning stone.\n\nRUNNING IT IN GAMETABLE:\n- The map 'The Sunless Shrine' is set as the active scene. The entrance chamber is already revealed, so players see the room they start in; use the Fog tool to open each further room as the party enters it (Reset fog re-covers everything).\n- Monster tokens are hidden from players by default. Un-hide a token (click it) the moment that encounter begins so it pops onto the players' screen.\n- Players click a creature's token to see its public description; the full SRD stat block is in the creature's DM-only notes (hidden stats), which only you can see.\n- Two handouts are in the Gallery: the 'Explorer's Map' (hand it out once they've mapped the place) and the 'Warning Glyph' (show it when they reach the shrine door). Push a handout to swap the players' view from the map to the image.\n\nSCALING: For four 1st-level PCs, cut the Hall of Bones to two skeletons and give the Keeper 24 hp. For 4th-level PCs, double every group and let the Keeper start with spiritual weapon already up.\n\nTONE: quiet, cold, and wrong. The deeper they go, the less sound carries."
+      "body": "THE SUNLESS SHRINE — a 2-3 hour Dungeons & Dragons 5e one-shot for four 2nd-level characters.\n\nPREMISE: Under a hill the locals won't name, a buried shrine once held a 'morning stone' that kept the dark out. A small cult found it, and in trying to wake an older, colder power they snuffed the stone's light. Now a sickly green 'sunless flame' burns on the altar, the shrine's dead rise, and the blight is creeping toward the valley. The party is sent (or lured) down to put the light out.\n\nHOOK (pick one): a missing sibling followed the cult down; the village well has gone black and bitter; a dying scholar pays the party to recover the morning stone.\n\nRUNNING IT IN GAMETABLE:\n- The map 'The Sunless Shrine' is set as the active scene. The entrance chamber is already revealed, so players see the room they start in; use the Fog tool to open each further room as the party enters it (Reset fog re-covers everything).\n- The four pre-gen heroes (Brakka the Fighter, Sister Veil the Cleric, Pip the Rogue, Orin the Wizard) are claimable characters: send players the one table link and each picks a hero from the 'Choose your character' window. Once claimed, that player can drag their own token. Reset a character from the Characters panel if someone misclicks.\n- Monster tokens are hidden from players by default. Un-hide a token (click it) the moment that encounter begins so it pops onto the players' screen.\n- Players click a creature's token to see its public description; the full SRD stat block is in the creature's DM-only notes (hidden stats), which only you can see.\n- Two handouts are in the Gallery: the 'Explorer's Map' (hand it out once they've mapped the place) and the 'Warning Glyph' (show it when they reach the shrine door). Push a handout to swap the players' view from the map to the image.\n\nSCALING: For four 1st-level PCs, cut the Hall of Bones to two skeletons and give the Keeper 24 hp. For 4th-level PCs, double every group and let the Keeper start with spiritual weapon already up.\n\nTONE: quiet, cold, and wrong. The deeper they go, the less sound carries."
     },
     {
       "title": "② Areas 1-2: The Descent & the Warren",

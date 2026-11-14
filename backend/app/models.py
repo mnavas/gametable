@@ -261,6 +261,12 @@ class PlayerSeat(Base):
     name: Mapped[str] = mapped_column(String(120), default="Player", nullable=False)
     color: Mapped[str] = mapped_column(String(32), default="#3366cc", nullable=False)
     claimed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    # Set when a player picks this seat over the shared link. The secret lets that
+    # player (this browser) keep control of the seat's token across reconnects;
+    # it is session state and never travels in a bundle export.
+    claim_token: Mapped[str | None] = mapped_column(String(64), unique=True, index=True, nullable=True)
+    claimed_by: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at = _created_at()
 
     campaign: Mapped[Campaign] = relationship(back_populates="seats")

@@ -85,6 +85,23 @@ export interface CreaturePublic {
   public_stats: string;
 }
 
+export interface Seat {
+  id: string;
+  name: string;
+  color: string;
+  claimed: boolean;
+  claimed_by?: string | null;
+  token_image_path?: string | null;
+  sort_order?: number;
+}
+
+export interface SeatClaim {
+  seat_id: string;
+  claim_token: string;
+  name: string;
+  color: string;
+}
+
 export interface Note {
   id: string;
   title: string;

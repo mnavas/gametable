@@ -2,10 +2,10 @@
 
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DicePanel from "../../../components/DicePanel";
 import { api, mediaUrl } from "../../../lib/api";
-import type { Creature, DiceRoll, GalleryImage, GameMap, Note, Token, Viewer } from "../../../lib/types";
+import type { Creature, DiceRoll, GalleryImage, GameMap, Note, Seat, SeatClaim, Token, Viewer } from "../../../lib/types";
 import { playerSocketUrl, useWS, type WSMessage } from "../../../lib/useWS";
 
 const TableCanvas = dynamic(() => import("../../../components/TableCanvas"), { ssr: false });
@@ -33,9 +33,25 @@ export default function PlayerPage() {
   const [detail, setDetail] = useState<Creature | null>(null);
   const [playerName, setPlayerName] = useState("Player");
   const [viewers, setViewers] = useState<Viewer[]>([]);
+  const [seats, setSeats] = useState<Seat[]>([]);
+  const [claim, setClaim] = useState<SeatClaim | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
+  const claimRef = useRef<SeatClaim | null>(null);
+
+  const seatStoreKey = `gametable_seat_${token}`;
+  const storeClaim = useCallback((c: SeatClaim | null) => {
+    claimRef.current = c;
+    setClaim(c);
+    try {
+      if (c) window.localStorage.setItem(seatStoreKey, JSON.stringify(c));
+      else window.localStorage.removeItem(seatStoreKey);
+    } catch {
+      /* private mode — in-memory only */
+    }
+  }, [seatStoreKey]);
 
   const reloadState = useCallback(async () => {
-    const s = await api.playerState(token);
+    const s = await api.playerState(token, claimRef.current?.claim_token);
     setCampaignName(s.campaign_name);
     setMap(s.active_map);
     setTokens(s.tokens);
@@ -53,6 +69,15 @@ export default function PlayerPage() {
       case "presence":
         setViewers((msg.viewers as Viewer[]) ?? []);
         break;
+      case "seats": {
+        // Merge live claim state in; keep the thumbnails from the initial fetch.
+        const incoming = (msg.seats as Seat[]) ?? [];
+        setSeats((prev) => {
+          const byId = new Map(prev.map((s) => [s.id, s]));
+          return incoming.map((s) => ({ ...byId.get(s.id), ...s }));
+        });
+        break;
+      }
       case "token_upsert":
       case "token_move":
         setTokens((prev) => upsert(prev, msg.token as Token));
@@ -76,10 +101,21 @@ export default function PlayerPage() {
     }
   }, [reloadState]);
 
-  const { send } = useWS(playerSocketUrl(token), onMessage);
+  const { send } = useWS(playerSocketUrl(token, claim?.claim_token), onMessage);
 
   useEffect(() => {
     (async () => {
+      // Restore a character this browser already claimed (survives refresh).
+      try {
+        const saved = window.localStorage.getItem(seatStoreKey);
+        if (saved) {
+          const c = JSON.parse(saved) as SeatClaim;
+          claimRef.current = c;
+          setClaim(c);
+        }
+      } catch {
+        /* ignore */
+      }
       try {
         await reloadState();
         setRolls(await api.playerDiceLog(token));
@@ -88,11 +124,56 @@ export default function PlayerPage() {
         } catch {
           /* notes are optional */
         }
+        try {
+          const ss = await api.playerSeats(token);
+          setSeats(ss);
+          // Offer the picker on arrival if there are characters and none is ours yet.
+          if (ss.length > 0 && !claimRef.current) setShowPicker(true);
+        } catch {
+          /* seats are optional */
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "This link is invalid or expired.");
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, reloadState]);
+
+  async function pickSeat(seat: Seat) {
+    if (seat.claimed) return;
+    try {
+      const c = await api.claimSeat(token, seat.id, playerName);
+      storeClaim(c);
+      setShowPicker(false);
+      if (playerName === "Player") setPlayerName(c.name);
+      await reloadState();
+    } catch {
+      // Someone grabbed it first — refresh the list so it shows as taken.
+      try {
+        setSeats(await api.playerSeats(token));
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
+  async function leaveSeat() {
+    const c = claimRef.current;
+    if (c) {
+      try {
+        await api.releaseSeat(token, c.claim_token);
+      } catch {
+        /* ignore */
+      }
+    }
+    storeClaim(null);
+    await reloadState();
+    try {
+      setSeats(await api.playerSeats(token));
+    } catch {
+      /* ignore */
+    }
+  }
 
   // Announce the player's chosen name to the table.
   useEffect(() => {
@@ -173,11 +254,75 @@ export default function PlayerPage() {
             </div>
           </div>
         )}
+
+        {showPicker && (
+          <div style={modalWrap} onClick={() => setShowPicker(false)}>
+            <div style={{ ...modal, maxWidth: 540 }} onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h2 style={{ margin: 0 }}>Choose your character</h2>
+                <button onClick={() => setShowPicker(false)} style={toolBtn}>✕</button>
+              </div>
+              <p style={{ color: "#9aa3b2", fontSize: 13, marginTop: 6 }}>
+                Pick the hero you&apos;re playing. Once taken, a character is greyed out for everyone else.
+              </p>
+              <div style={{ display: "grid", gap: 10, marginTop: 12 }}>
+                {seats.map((s) => {
+                  const mine = claim?.seat_id === s.id;
+                  const taken = s.claimed && !mine;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => pickSeat(s)}
+                      disabled={taken}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 12, textAlign: "left",
+                        background: mine ? "#1d2a24" : "#0f1218",
+                        border: `1px solid ${mine ? "#3a6b55" : taken ? "#2a2f3c" : "#39507e"}`,
+                        color: "#e8e8ea", borderRadius: 10, padding: "10px 12px",
+                        cursor: taken ? "not-allowed" : "pointer", opacity: taken ? 0.55 : 1,
+                      }}
+                    >
+                      {s.token_image_path ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={mediaUrl(s.token_image_path) ?? ""} alt={s.name} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", border: `2px solid ${s.color}` }} />
+                      ) : (
+                        <span style={{ width: 44, height: 44, borderRadius: "50%", background: s.color, display: "inline-block" }} />
+                      )}
+                      <span style={{ flex: 1 }}>
+                        <span style={{ display: "block", fontSize: 15, fontWeight: 600 }}>{s.name}</span>
+                        <span style={{ fontSize: 12, color: taken ? "#c98b8b" : mine ? "#7fe0b0" : "#8a93a2" }}>
+                          {mine ? "Yours" : taken ? `Taken${s.claimed_by ? ` by ${s.claimed_by}` : ""}` : "Available"}
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <aside style={{ background: "#13161d", borderLeft: "1px solid #222834", padding: 14, overflowY: "auto" }}>
         <h3 style={label}>You</h3>
         <input value={playerName} onChange={(e) => setPlayerName(e.target.value)} style={input} placeholder="Your name" />
+
+        {seats.length > 0 && (
+          <div style={{ marginTop: 12 }}>
+            <h3 style={label}>Your character</h3>
+            {claim ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ width: 12, height: 12, borderRadius: "50%", background: claim.color, display: "inline-block" }} />
+                <span style={{ flex: 1, fontSize: 14 }}>{claim.name}</span>
+                <button onClick={leaveSeat} style={{ ...toolBtn, fontSize: 12, padding: "5px 9px" }}>Leave</button>
+              </div>
+            ) : (
+              <button onClick={() => setShowPicker(true)} style={{ ...toolBtn, width: "100%" }}>
+                🎭 Pick a character
+              </button>
+            )}
+          </div>
+        )}
 
         <h3 style={{ ...label, marginTop: 18 }}>At the table ({viewers.length})</h3>
         {viewers.map((v, i) => (

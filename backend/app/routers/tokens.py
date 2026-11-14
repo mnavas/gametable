@@ -7,11 +7,36 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..deps import get_owned_map, get_owned_token
-from ..models import Map, Token
+from ..models import Creature, Map, PlayerSeat, Token
 from ..realtime import hub
 from ..schemas import TokenCreate, TokenDM, TokenPublic, TokenUpdate
+from .player import broadcast_seats
 
 router = APIRouter(tags=["tokens"])
+
+
+def _ensure_seat_for_player(db: Session, token: Token, campaign_id) -> bool:
+    """A placed player-character becomes a claimable seat, so players can pick it.
+
+    Reuses an existing seat of the same name (idempotent on re-placement). Returns
+    True if a new seat was created. Caller commits.
+    """
+    if token.owner_seat_id is not None or not token.creature_id:
+        return False
+    cr = db.get(Creature, token.creature_id)
+    if not cr or cr.type != "player":
+        return False
+    seat = db.scalar(
+        select(PlayerSeat).where(PlayerSeat.campaign_id == campaign_id, PlayerSeat.name == cr.name)
+    )
+    created = False
+    if not seat:
+        seat = PlayerSeat(campaign_id=campaign_id, name=cr.name[:120], color=token.color or "#3366cc")
+        db.add(seat)
+        db.flush()
+        created = True
+    token.owner_seat_id = seat.id
+    return created
 
 
 async def _broadcast_upsert(db: Session, token: Token) -> None:
@@ -41,9 +66,13 @@ async def create_token(
 ):
     token = Token(map_id=m.id, **payload.model_dump())
     db.add(token)
+    db.flush()
+    seat_created = _ensure_seat_for_player(db, token, m.campaign_id)
     db.commit()
     db.refresh(token)
     await _broadcast_upsert(db, token)
+    if seat_created:
+        await broadcast_seats(m.campaign_id, db)
     return token
 
 

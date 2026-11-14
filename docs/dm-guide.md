@@ -60,8 +60,9 @@ players' characters. Click a creature to open its editor, where you set:
 - **Click a token** (as the DM) to toggle it **hidden from players** — perfect for an
   ambush. Hidden tokens show for you with a dashed red border; players don't receive
   them at all until you reveal them.
-- Players can move **their own** character token if it's assigned to their seat;
-  everything else is yours to move.
+- Players can move **their own** character token once they've claimed that character
+  (see below); everything else is yours to move. Drop a **player**-type creature on the
+  map and it automatically becomes a claimable character — no extra setup.
 
 ---
 
@@ -105,6 +106,16 @@ so everything you need to run them is right here.
 - You can give **one link for the whole table** or per-player links, add an optional
   **password** or **expiry**, and **revoke** a link at any time to cut access.
 
+### Players pick their characters
+
+You don't need a separate link per player. Send everyone the **same table link**; when
+they open it, each player chooses a character from a picker. Taken characters show as
+unavailable, so two people can't grab the same one. The **Characters** panel (right
+sidebar) shows who has claimed what — hit **Reset** next to a character to free it if
+someone picked the wrong one or a player drops out. Any **player**-type creature you
+place on the map shows up here automatically; the included one-shot ships with its four
+pre-gens ready to claim.
+
 See the [player guide](player-guide.md) for what your players will see.
 
 ## 9. Take your game anywhere (export / import)
@@ -139,6 +150,8 @@ the repo for a complete, ready-to-run adventure. You can also **hand-author** a 
 | Show players a picture | Gallery → Show |
 | Roll behind the screen | Dice → 🤫 |
 | Let players in | Create a share link, send the URL |
+| Let players run their own PCs | Share the link; they pick a character from the picker |
+| Free a character a player grabbed | Characters panel → Reset |
 | Kick everyone off a link | Revoke the share link |
 | Back up / move a campaign | ⬇ Export it as a `.zip` |
 | Load a campaign or adventure | ⬆ Import bundle → pick the `.zip` |

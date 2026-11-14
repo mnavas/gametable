@@ -18,6 +18,7 @@ from .routers import (
     maps,
     notes,
     player,
+    seats,
     tokens,
     uploads,
     ws,
@@ -53,6 +54,7 @@ app.include_router(tokens.router)
 app.include_router(creatures.router)
 app.include_router(notes.router)
 app.include_router(gallery.router)
+app.include_router(seats.router)
 app.include_router(player.router)
 app.include_router(uploads.router)
 app.include_router(ws.router)

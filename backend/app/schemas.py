@@ -281,6 +281,47 @@ class PlayerState(BaseModel):
     seat_id: uuid.UUID | None
 
 
+# --- Seats (players claim a character over the shared link) ------------------
+
+class SeatPublic(BaseModel):
+    """What a joining player sees in the character picker. No claim_token."""
+    id: uuid.UUID
+    name: str
+    color: str
+    claimed: bool
+    claimed_by: str | None = None
+    token_image_path: str | None = None  # thumbnail of the character's token, if any
+
+
+class SeatDM(ORMModel):
+    id: uuid.UUID
+    name: str
+    color: str
+    claimed: bool
+    claimed_by: str | None
+    sort_order: int
+
+
+class SeatCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+    color: str = "#3366cc"
+
+
+class SeatClaimRequest(BaseModel):
+    player_name: str = Field(default="Player", max_length=120)
+
+
+class SeatClaimResponse(BaseModel):
+    seat_id: uuid.UUID
+    claim_token: str
+    name: str
+    color: str
+
+
+class SeatReleaseRequest(BaseModel):
+    claim_token: str = Field(min_length=1, max_length=64)
+
+
 # --- Dice -------------------------------------------------------------------
 
 class RollRequest(BaseModel):

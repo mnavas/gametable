@@ -91,11 +91,33 @@ def export_campaign(db: "Session", campaign: "Campaign") -> bytes:
     from sqlalchemy import select
 
     from . import storage
-    from .models import Creature, GalleryImage, Map, Note, Token
+    from .models import Creature, GalleryImage, Map, Note, PlayerSeat, Token
 
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
         media = _MediaWriter(zf, storage.fs_path_for_url)
+
+        # Seats (the table's claimable characters). Claim state is live session
+        # data and is deliberately NOT exported — a bundle imports with every
+        # seat free.
+        seats = db.scalars(
+            select(PlayerSeat).where(PlayerSeat.campaign_id == campaign.id)
+            .order_by(PlayerSeat.sort_order, PlayerSeat.created_at)
+        ).all()
+        seat_keys: dict[uuid.UUID, str] = {}
+        used_seat_keys: set[str] = set()
+        for s in seats:
+            k = _slug(s.name, "seat")
+            kk, i = k, 2
+            while kk in used_seat_keys:
+                kk = f"{k}-{i}"
+                i += 1
+            used_seat_keys.add(kk)
+            seat_keys[s.id] = kk
+        seats_j = [
+            {"key": seat_keys[s.id], "name": s.name, "color": s.color, "sort_order": s.sort_order}
+            for s in seats
+        ]
 
         creatures = db.scalars(
             select(Creature).where(Creature.campaign_id == campaign.id).order_by(Creature.created_at)
@@ -151,6 +173,7 @@ def export_campaign(db: "Session", campaign: "Campaign") -> bytes:
                 "fog": m.fog or {"revealed": [], "hidden": []},
                 "tokens": [{
                     "creature": keys.get(t.creature_id) if t.creature_id else None,
+                    "seat": seat_keys.get(t.owner_seat_id) if t.owner_seat_id else None,
                     "label": t.label,
                     "x": t.x, "y": t.y,
                     "size": t.size,
@@ -188,6 +211,7 @@ def export_campaign(db: "Session", campaign: "Campaign") -> bytes:
             "generator": "GameTable",
             "exported_at": datetime.now(timezone.utc).isoformat(),
             "campaign": {"name": campaign.name, "description": campaign.description},
+            "seats": seats_j,
             "creatures": creatures_j,
             "maps": maps_j,
             "notes": notes_j,
@@ -234,7 +258,7 @@ def _read_member(zf: zipfile.ZipFile, name: str) -> bytes:
 def import_bundle(db: "Session", user: "User", data: bytes, name_override: str | None = None) -> "Campaign":
     """Create a brand-new campaign owned by `user` from a bundle .zip."""
     from . import storage
-    from .models import Campaign, Creature, GalleryImage, Map, Note, Token
+    from .models import Campaign, Creature, GalleryImage, Map, Note, PlayerSeat, Token
 
     try:
         zf = zipfile.ZipFile(io.BytesIO(data))
@@ -257,11 +281,12 @@ def import_bundle(db: "Session", user: "User", data: bytes, name_override: str |
         raise BundleError("Bundle was made by a newer GameTable version")
 
     camp_j = manifest.get("campaign") or {}
+    seats_j = manifest.get("seats") or []
     creatures_j = manifest.get("creatures") or []
     maps_j = manifest.get("maps") or []
     notes_j = manifest.get("notes") or []
     gallery_j = manifest.get("gallery") or []
-    total = len(creatures_j) + len(maps_j) + len(notes_j) + len(gallery_j) + sum(
+    total = len(seats_j) + len(creatures_j) + len(maps_j) + len(notes_j) + len(gallery_j) + sum(
         len(m.get("tokens") or []) for m in maps_j if isinstance(m, dict)
     )
     if total > _MAX_ENTITIES:
@@ -284,7 +309,25 @@ def import_bundle(db: "Session", user: "User", data: bytes, name_override: str |
         raw = _read_member(zf, _safe_member(base, ref))
         return storage.save_protected_bytes(raw, _ext_of(ref), campaign.id)
 
-    # Creatures first (tokens reference them by key).
+    # Seats first (tokens may reference them). Imported seats are always free.
+    seat_key_to_id: dict[str, uuid.UUID] = {}
+    for order, sj in enumerate(seats_j):
+        if not isinstance(sj, dict):
+            continue
+        seat = PlayerSeat(
+            campaign_id=campaign.id,
+            name=str(sj.get("name", "Player"))[:120],
+            color=str(sj.get("color", "#3366cc"))[:32],
+            sort_order=int(sj.get("sort_order", order) or 0),
+            claimed=False,
+        )
+        db.add(seat)
+        db.flush()
+        key = sj.get("key")
+        if isinstance(key, str) and key:
+            seat_key_to_id[key] = seat.id
+
+    # Creatures next (tokens reference them by key).
     key_to_id: dict[str, uuid.UUID] = {}
     for cj in creatures_j:
         if not isinstance(cj, dict):
@@ -337,6 +380,7 @@ def import_bundle(db: "Session", user: "User", data: bytes, name_override: str |
             db.add(Token(
                 map_id=m.id,
                 creature_id=key_to_id.get(tj.get("creature")) if tj.get("creature") else None,
+                owner_seat_id=seat_key_to_id.get(tj.get("seat")) if tj.get("seat") else None,
                 label=str(tj.get("label", ""))[:120],
                 x=float(tj.get("x", 0) or 0),
                 y=float(tj.get("y", 0) or 0),

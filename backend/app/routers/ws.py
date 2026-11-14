@@ -89,7 +89,9 @@ async def dm_socket(websocket: WebSocket, campaign_id: uuid.UUID, token: str = Q
 
 
 @router.websocket("/ws/player")
-async def player_socket(websocket: WebSocket, share_token: str = Query(...)):
+async def player_socket(
+    websocket: WebSocket, share_token: str = Query(...), claim_token: str | None = Query(default=None)
+):
     with SessionLocal() as db:
         link = db.scalar(select(ShareLink).where(ShareLink.token == share_token))
         if not link or link.revoked:
@@ -101,6 +103,15 @@ async def player_socket(websocket: WebSocket, share_token: str = Query(...)):
         campaign_id = link.campaign_id
         seat_id = link.seat_id
         seat_name = None
+        # A seat claimed over the shared link (picked a character) wins over the link's seat.
+        if claim_token:
+            claimed = db.scalar(
+                select(PlayerSeat).where(
+                    PlayerSeat.campaign_id == campaign_id, PlayerSeat.claim_token == claim_token
+                )
+            )
+            if claimed:
+                seat_id = claimed.id
         if seat_id:
             seat = db.get(PlayerSeat, seat_id)
             seat_name = seat.name if seat else None

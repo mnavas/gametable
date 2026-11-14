@@ -13,6 +13,16 @@ side panel so the rest of the table knows who you are.
 
 ---
 
+## Pick your character
+
+If the game has pre-made characters, a **Choose your character** window appears when
+you join. Tap the hero you're playing — once you take one, it's greyed out as **taken**
+for everyone else, so no two players grab the same one. Your pick sticks on this device
+(even if you refresh), and you can **Leave** a character from the side panel to free it
+up. Once you've claimed a character, you can **drag its token** around the map.
+
+---
+
 ## The map
 
 - You see the map **as your DM has revealed it** — unexplored areas stay dark until
@@ -20,8 +30,8 @@ side panel so the rest of the table knows who you are.
 - **Pan** by dragging an empty area; **zoom** with the scroll wheel or a pinch.
 - **Tokens** are the circles on the map — characters, monsters, and NPCs. They move
   in real time as your DM (or you) move them.
-- If your DM has given you a character token, you can **drag your own token** to move
-  it. Everything else is theirs to move.
+- Once you've **claimed a character** (above), you can **drag your own token** to move
+  it. Everything else is the DM's to move.
 
 ---
 

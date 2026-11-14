@@ -74,6 +74,7 @@ index.html          Landing page (GitHub Pages)
 - Manual fog of war; players see only what the DM reveals
 - Public vs DM-only (hidden) creature stats and notes, enforced server-side
 - Player share link → player view (map mode + handout/gallery mode)
+- Players **pick a character** from the shared link (taken ones lock out); they drag only their own token
 - Shared dice roller with public and private/silent rolls
 - Live WebSocket sync with server-side permission filtering
 - **Export / import a campaign as a `.zip`** — build it at home, run it at the table

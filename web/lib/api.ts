@@ -7,6 +7,8 @@ import type {
   GameMap,
   Note,
   PlayerState,
+  Seat,
+  SeatClaim,
   ShareLink,
   Token,
   User,
@@ -178,6 +180,11 @@ export const api = {
     request<DiceRoll>(`/campaigns/${campaignId}/roll`, { method: "POST", body: JSON.stringify({ formula, visibility }) }),
   dmDiceLog: (campaignId: string) => request<DiceRoll[]>(`/campaigns/${campaignId}/dice`),
 
+  // --- Seats (DM view: who has claimed which character) ---
+  listSeats: (campaignId: string) => request<Seat[]>(`/campaigns/${campaignId}/seats`),
+  resetSeat: (campaignId: string, seatId: string) =>
+    request<Seat>(`/campaigns/${campaignId}/seats/${seatId}/reset`, { method: "POST" }),
+
   // --- Share links ---
   listShareLinks: (campaignId: string) => request<ShareLink[]>(`/campaigns/${campaignId}/share-links`),
   createShareLink: (campaignId: string, label = "") =>
@@ -199,7 +206,26 @@ export const api = {
     request<void>(`/campaigns/${campaignId}/gallery/${imageId}/unshare`, { method: "POST" }),
 
   // --- Player (share-token scoped) ---
-  playerState: (shareToken: string) => request<PlayerState>(`/play/state?share_token=${encodeURIComponent(shareToken)}`, {}, false),
+  playerState: (shareToken: string, claimToken?: string | null) =>
+    request<PlayerState>(
+      `/play/state?share_token=${encodeURIComponent(shareToken)}` +
+        (claimToken ? `&claim_token=${encodeURIComponent(claimToken)}` : ""),
+      {},
+      false,
+    ),
+  // Seats: list the table's characters, claim one, or release it.
+  playerSeats: (shareToken: string) =>
+    request<Seat[]>(`/play/seats?share_token=${encodeURIComponent(shareToken)}`, {}, false),
+  claimSeat: (shareToken: string, seatId: string, playerName: string) =>
+    request<SeatClaim>(`/play/seats/${seatId}/claim?share_token=${encodeURIComponent(shareToken)}`, {
+      method: "POST",
+      body: JSON.stringify({ player_name: playerName }),
+    }, false),
+  releaseSeat: (shareToken: string, claimToken: string) =>
+    request<{ ok: boolean }>(`/play/seats/release?share_token=${encodeURIComponent(shareToken)}`, {
+      method: "POST",
+      body: JSON.stringify({ claim_token: claimToken }),
+    }, false),
   playerCreature: (shareToken: string, creatureId: string) =>
     request<Creature>(`/play/creatures/${creatureId}?share_token=${encodeURIComponent(shareToken)}`, {}, false),
   playerNotes: (shareToken: string) => request<Note[]>(`/play/notes?share_token=${encodeURIComponent(shareToken)}`, {}, false),

@@ -16,9 +16,10 @@ export function dmSocketUrl(campaignId: string, jwt: string): string {
   return `${wsBase()}/ws/dm?campaign_id=${campaignId}&token=${encodeURIComponent(jwt)}`;
 }
 
-/** Player channel: ws/player?share_token=.. */
-export function playerSocketUrl(shareToken: string): string {
-  return `${wsBase()}/ws/player?share_token=${encodeURIComponent(shareToken)}`;
+/** Player channel: ws/player?share_token=..[&claim_token=..] */
+export function playerSocketUrl(shareToken: string, claimToken?: string | null): string {
+  const base = `${wsBase()}/ws/player?share_token=${encodeURIComponent(shareToken)}`;
+  return claimToken ? `${base}&claim_token=${encodeURIComponent(claimToken)}` : base;
 }
 
 export function useWS(url: string | null, onMessage: (msg: WSMessage) => void) {

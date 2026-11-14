@@ -6,15 +6,16 @@ handed to anyone.
 """
 from __future__ import annotations
 
+import secrets
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..deps import PlayerContext, get_player_context
-from ..models import Creature, DiceRoll, GalleryImage, Map, Token
+from ..models import Creature, DiceRoll, GalleryImage, Map, PlayerSeat, Token
 from ..realtime import hub
 from ..schemas import (
     CreaturePublic,
@@ -24,6 +25,10 @@ from ..schemas import (
     NotePublic,
     PlayerRollRequest,
     PlayerState,
+    SeatClaimRequest,
+    SeatClaimResponse,
+    SeatPublic,
+    SeatReleaseRequest,
     TokenPublic,
 )
 from ..security import DiceError, roll_formula
@@ -32,9 +37,123 @@ from ..models import Note
 router = APIRouter(prefix="/play", tags=["player"])
 
 
+# --- Seats: pick a character over the shared link ---------------------------
+
+def _seat_token_image(db: Session, campaign_id: uuid.UUID, seat_id: uuid.UUID) -> str | None:
+    """The token art of the character a seat controls, for the picker thumbnail."""
+    tok = db.scalar(
+        select(Token).join(Map, Token.map_id == Map.id).where(
+            Map.campaign_id == campaign_id, Token.owner_seat_id == seat_id
+        )
+    )
+    if tok and tok.creature_id:
+        cr = db.get(Creature, tok.creature_id)
+        if cr:
+            return cr.token_image_path
+    return None
+
+
+def _seats_public(db: Session, campaign_id: uuid.UUID) -> list[SeatPublic]:
+    seats = db.scalars(
+        select(PlayerSeat).where(PlayerSeat.campaign_id == campaign_id)
+        .order_by(PlayerSeat.sort_order, PlayerSeat.created_at)
+    ).all()
+    return [
+        SeatPublic(
+            id=s.id, name=s.name, color=s.color, claimed=s.claimed, claimed_by=s.claimed_by,
+            token_image_path=_seat_token_image(db, campaign_id, s.id),
+        )
+        for s in seats
+    ]
+
+
+async def broadcast_seats(campaign_id: uuid.UUID, db: Session) -> None:
+    """Tell every connected client the current claim state (so pickers update live)."""
+    seats = db.scalars(
+        select(PlayerSeat).where(PlayerSeat.campaign_id == campaign_id)
+        .order_by(PlayerSeat.sort_order, PlayerSeat.created_at)
+    ).all()
+    payload = {
+        "type": "seats",
+        "seats": [
+            {"id": str(s.id), "name": s.name, "color": s.color, "claimed": s.claimed, "claimed_by": s.claimed_by}
+            for s in seats
+        ],
+    }
+    await hub.broadcast(campaign_id, payload)
+
+
+def _resolve_seat(db: Session, campaign_id: uuid.UUID, claim_token: str | None) -> uuid.UUID | None:
+    if not claim_token:
+        return None
+    s = db.scalar(
+        select(PlayerSeat).where(
+            PlayerSeat.campaign_id == campaign_id, PlayerSeat.claim_token == claim_token
+        )
+    )
+    return s.id if s else None
+
+
+@router.get("/seats", response_model=list[SeatPublic])
+def list_seats(ctx: PlayerContext = Depends(get_player_context), db: Session = Depends(get_db)):
+    return _seats_public(db, ctx.campaign.id)
+
+
+@router.post("/seats/{seat_id}/claim", response_model=SeatClaimResponse)
+async def claim_seat(
+    seat_id: uuid.UUID,
+    payload: SeatClaimRequest,
+    ctx: PlayerContext = Depends(get_player_context),
+    db: Session = Depends(get_db),
+):
+    seat = db.get(PlayerSeat, seat_id)
+    if not seat or seat.campaign_id != ctx.campaign.id:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Character not found")
+    claim = secrets.token_urlsafe(24)
+    # Atomic claim: only succeeds if the seat is still free (guards a race between
+    # two players tapping the same character at once).
+    res = db.execute(
+        update(PlayerSeat)
+        .where(PlayerSeat.id == seat_id, PlayerSeat.claimed.is_(False))
+        .values(claimed=True, claim_token=claim, claimed_by=payload.player_name[:120])
+    )
+    if res.rowcount == 0:
+        db.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, "That character is already taken")
+    db.commit()
+    await broadcast_seats(ctx.campaign.id, db)
+    return SeatClaimResponse(seat_id=seat.id, claim_token=claim, name=seat.name, color=seat.color)
+
+
+@router.post("/seats/release")
+async def release_seat(
+    payload: SeatReleaseRequest,
+    ctx: PlayerContext = Depends(get_player_context),
+    db: Session = Depends(get_db),
+):
+    seat = db.scalar(
+        select(PlayerSeat).where(
+            PlayerSeat.campaign_id == ctx.campaign.id, PlayerSeat.claim_token == payload.claim_token
+        )
+    )
+    if seat:
+        seat.claimed = False
+        seat.claim_token = None
+        seat.claimed_by = None
+        db.commit()
+        await broadcast_seats(ctx.campaign.id, db)
+    return {"ok": True}
+
+
 @router.get("/state", response_model=PlayerState)
-def player_state(ctx: PlayerContext = Depends(get_player_context), db: Session = Depends(get_db)):
+def player_state(
+    ctx: PlayerContext = Depends(get_player_context),
+    db: Session = Depends(get_db),
+    claim_token: str | None = Query(default=None),
+):
     campaign = ctx.campaign
+    # A seat the player claimed in-session takes precedence over a per-seat link.
+    seat_id = _resolve_seat(db, campaign.id, claim_token) or ctx.seat_id
 
     active_map = None
     tokens: list[TokenPublic] = []
@@ -60,7 +179,7 @@ def player_state(ctx: PlayerContext = Depends(get_player_context), db: Session =
         active_map=active_map,
         tokens=tokens,
         active_image=active_image,
-        seat_id=ctx.seat_id,
+        seat_id=seat_id,
     )
 
 
