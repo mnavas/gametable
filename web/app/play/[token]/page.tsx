@@ -69,6 +69,13 @@ export default function PlayerPage() {
       case "presence":
         setViewers((msg.viewers as Viewer[]) ?? []);
         break;
+      case "notes": {
+        // DM shared / un-shared / edited a handout — update the Notes tab live.
+        const next = (msg.notes as Note[]) ?? [];
+        setNotes(next);
+        if (next.length === 0) setView((v) => (v === "notes" ? "map" : v));
+        break;
+      }
       case "seats": {
         // Merge live claim state in; keep the thumbnails from the initial fetch.
         const incoming = (msg.seats as Seat[]) ?? [];

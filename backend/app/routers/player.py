@@ -67,6 +67,20 @@ def _seats_public(db: Session, campaign_id: uuid.UUID) -> list[SeatPublic]:
     ]
 
 
+async def broadcast_notes(campaign_id: uuid.UUID, db: Session) -> None:
+    """Push the current public notes to players, so handouts appear/vanish live."""
+    rows = db.scalars(
+        select(Note).where(Note.campaign_id == campaign_id, Note.visibility == "public")
+        .order_by(Note.sort_order)
+    ).all()
+    payload = {
+        "type": "notes",
+        "notes": [NotePublic.model_validate(n).model_dump(mode="json") for n in rows],
+    }
+    # Players only — the DM already has the full list in their editor.
+    await hub.broadcast(campaign_id, None, player_payload=payload)
+
+
 async def broadcast_seats(campaign_id: uuid.UUID, db: Session) -> None:
     """Tell every connected client the current claim state (so pickers update live)."""
     seats = db.scalars(
