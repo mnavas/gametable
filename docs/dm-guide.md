@@ -86,8 +86,12 @@ Use the **Dice** panel:
 
 ## 7. Notes
 
-Keep lore, plot, and session recaps as **notes**. Each note is either **hidden**
-(DM-only) or **public** (a handout your players can read) — your call, per note.
+Open the **Notes** panel (left sidebar) and click **＋ New note**, or click any note to
+read and edit it. Each note is either **🔒 DM-only** or a **👁 player handout** — flip it
+with one click in the editor, per note. DM-only notes (tactics, the villain's plan,
+read-aloud text) never reach players; player handouts show up under the **Notes** button
+in their view. Imported adventures — like the included one-shot — carry all their notes,
+so everything you need to run them is right here.
 
 ---
 

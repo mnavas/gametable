@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import DicePanel from "../../../components/DicePanel";
 import { api, mediaUrl } from "../../../lib/api";
-import type { Creature, DiceRoll, GalleryImage, GameMap, Token, Viewer } from "../../../lib/types";
+import type { Creature, DiceRoll, GalleryImage, GameMap, Note, Token, Viewer } from "../../../lib/types";
 import { playerSocketUrl, useWS, type WSMessage } from "../../../lib/useWS";
 
 const TableCanvas = dynamic(() => import("../../../components/TableCanvas"), { ssr: false });
@@ -28,7 +28,8 @@ export default function PlayerPage() {
   const [activeImage, setActiveImage] = useState<GalleryImage | null>(null);
   const [seatId, setSeatId] = useState<string | null>(null);
   const [rolls, setRolls] = useState<DiceRoll[]>([]);
-  const [view, setView] = useState<"map" | "image">("map");
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [view, setView] = useState<"map" | "image" | "notes">("map");
   const [detail, setDetail] = useState<Creature | null>(null);
   const [playerName, setPlayerName] = useState("Player");
   const [viewers, setViewers] = useState<Viewer[]>([]);
@@ -82,6 +83,11 @@ export default function PlayerPage() {
       try {
         await reloadState();
         setRolls(await api.playerDiceLog(token));
+        try {
+          setNotes(await api.playerNotes(token));
+        } catch {
+          /* notes are optional */
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "This link is invalid or expired.");
       }
@@ -120,9 +126,27 @@ export default function PlayerPage() {
           >
             Handout{activeImage ? " •" : ""}
           </button>
+          <button
+            onClick={() => setView("notes")}
+            disabled={notes.length === 0}
+            style={{ ...toolBtn, background: view === "notes" ? "#3b5bdb" : "#232838", opacity: notes.length ? 1 : 0.5 }}
+          >
+            Notes{notes.length ? ` (${notes.length})` : ""}
+          </button>
         </div>
 
-        {view === "image" && activeImage ? (
+        {view === "notes" ? (
+          <div style={{ position: "absolute", inset: 0, overflowY: "auto", padding: "56px 24px 24px" }}>
+            <div style={{ maxWidth: 680, margin: "0 auto" }}>
+              {notes.map((n) => (
+                <article key={n.id} style={{ marginBottom: 28 }}>
+                  <h2 style={{ margin: "0 0 8px", color: "#e8e8ea" }}>{n.title}</h2>
+                  <div style={{ whiteSpace: "pre-wrap", color: "#c4c9d4", lineHeight: 1.6 }}>{n.body}</div>
+                </article>
+              ))}
+            </div>
+          </div>
+        ) : view === "image" && activeImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={mediaUrl(activeImage.image_path) ?? ""} alt={activeImage.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
         ) : (

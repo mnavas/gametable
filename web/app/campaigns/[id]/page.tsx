@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import CreatureEditor from "../../../components/CreatureEditor";
+import NotesEditor from "../../../components/NotesEditor";
 import DicePanel from "../../../components/DicePanel";
 import { api, getToken } from "../../../lib/api";
-import type { Campaign, Creature, DiceRoll, GalleryImage, GameMap, Token, Viewer } from "../../../lib/types";
+import type { Campaign, Creature, DiceRoll, GalleryImage, GameMap, Note, Token, Viewer } from "../../../lib/types";
 import { dmSocketUrl, useWS, type WSMessage } from "../../../lib/useWS";
 
 const TableCanvas = dynamic(() => import("../../../components/TableCanvas"), { ssr: false });
@@ -40,6 +41,8 @@ export default function DMSessionPage() {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [creatures, setCreatures] = useState<Creature[]>([]);
   const [gallery, setGallery] = useState<GalleryImage[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [rolls, setRolls] = useState<DiceRoll[]>([]);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [fogMode, setFogMode] = useState(false);
@@ -91,17 +94,19 @@ export default function DMSessionPage() {
     }
     (async () => {
       try {
-        const [c, ms, cr, gal, dice] = await Promise.all([
+        const [c, ms, cr, gal, nts, dice] = await Promise.all([
           api.getCampaign(campaignId),
           api.listMaps(campaignId),
           api.listCreatures(campaignId),
           api.listGallery(campaignId),
+          api.listNotes(campaignId),
           api.dmDiceLog(campaignId),
         ]);
         setCampaign(c);
         setMaps(ms);
         setCreatures(cr);
         setGallery(gal);
+        setNotes(nts);
         setRolls(dice);
         const am = ms.find((m) => m.id === c.active_map_id) ?? null;
         if (am) await selectMap(am);
@@ -163,6 +168,12 @@ export default function DMSessionPage() {
   async function makeShareLink() {
     const link = await api.createShareLink(campaignId, "Table link");
     setShareUrl(`${window.location.origin}/play/${link.token}`);
+  }
+
+  async function addNote() {
+    const note = await api.createNote(campaignId, { title: "New note", body: "", visibility: "hidden" });
+    setNotes((prev) => [...prev, note]);
+    setEditingNote(note);
   }
 
   async function pushImage(img: GalleryImage) {
@@ -229,6 +240,18 @@ export default function DMSessionPage() {
               </button>
             </div>
           ))}
+        </Section>
+
+        <Section title="Notes">
+          <button onClick={addNote} style={{ ...rowBtn, cursor: "pointer", justifyContent: "center" }}>＋ New note</button>
+          {notes.map((n) => (
+            <div key={n.id} style={rowBtn} onClick={() => setEditingNote(n)} title="Read / edit">
+              <span style={{ cursor: "pointer", flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                {n.visibility === "public" ? "👁 " : "🔒 "}{n.title}
+              </span>
+            </div>
+          ))}
+          {notes.length === 0 && <div style={{ color: "#6b7280", fontSize: 12 }}>No notes yet.</div>}
         </Section>
       </aside>
 
@@ -302,6 +325,22 @@ export default function DMSessionPage() {
             api.deleteCreature(id);
             setCreatures((prev) => prev.filter((c) => c.id !== id));
             setTokens((prev) => prev.map((t) => (t.creature_id === id ? { ...t, creature_id: null } : t)));
+          }}
+        />
+      )}
+
+      {editingNote && (
+        <NotesEditor
+          campaignId={campaignId}
+          note={editingNote}
+          onClose={() => setEditingNote(null)}
+          onChange={(u) => {
+            setNotes((prev) => prev.map((n) => (n.id === u.id ? u : n)));
+            setEditingNote(null);
+          }}
+          onDelete={(id) => {
+            api.deleteNote(campaignId, id);
+            setNotes((prev) => prev.filter((n) => n.id !== id));
           }}
         />
       )}

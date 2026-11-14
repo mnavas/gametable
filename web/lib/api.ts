@@ -5,6 +5,7 @@ import type {
   DiceRoll,
   GalleryImage,
   GameMap,
+  Note,
   PlayerState,
   ShareLink,
   Token,
@@ -163,6 +164,15 @@ export const api = {
     return request<Creature>(`/creatures/${creatureId}/${kind}-image`, { method: "PUT", body: fd });
   },
 
+  // --- Notes (DM-authored; hidden = DM-only, public = player handout) ---
+  listNotes: (campaignId: string) => request<Note[]>(`/campaigns/${campaignId}/notes`),
+  createNote: (campaignId: string, data: Partial<Note>) =>
+    request<Note>(`/campaigns/${campaignId}/notes`, { method: "POST", body: JSON.stringify(data) }),
+  updateNote: (campaignId: string, noteId: string, data: Partial<Note>) =>
+    request<Note>(`/campaigns/${campaignId}/notes/${noteId}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteNote: (campaignId: string, noteId: string) =>
+    request<void>(`/campaigns/${campaignId}/notes/${noteId}`, { method: "DELETE" }),
+
   // --- Dice ---
   dmRoll: (campaignId: string, formula: string, visibility: string) =>
     request<DiceRoll>(`/campaigns/${campaignId}/roll`, { method: "POST", body: JSON.stringify({ formula, visibility }) }),
@@ -192,6 +202,7 @@ export const api = {
   playerState: (shareToken: string) => request<PlayerState>(`/play/state?share_token=${encodeURIComponent(shareToken)}`, {}, false),
   playerCreature: (shareToken: string, creatureId: string) =>
     request<Creature>(`/play/creatures/${creatureId}?share_token=${encodeURIComponent(shareToken)}`, {}, false),
+  playerNotes: (shareToken: string) => request<Note[]>(`/play/notes?share_token=${encodeURIComponent(shareToken)}`, {}, false),
   playerDiceLog: (shareToken: string) => request<DiceRoll[]>(`/play/dice?share_token=${encodeURIComponent(shareToken)}`, {}, false),
   playerRoll: (shareToken: string, formula: string, visibility: string, player_name: string) =>
     request<DiceRoll>(`/play/roll?share_token=${encodeURIComponent(shareToken)}`, {

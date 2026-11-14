@@ -38,6 +38,12 @@ When your DM shows a picture — a map, a letter, a piece of art — a **Handout
 appears at the top. Switch between **Map** and **Handout** any time; your DM can also
 bring the handout up for you.
 
+## Notes
+
+If your DM has shared any written handouts — rumours, a letter, the text on a plaque —
+a **Notes** button appears at the top. Open it to read them any time. (Your DM's private
+notes stay with the DM; you only ever see the ones they've chosen to share.)
+
 ---
 
 ## Rolling dice

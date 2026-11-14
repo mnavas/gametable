@@ -124,7 +124,15 @@
         "unit_per_cell": 5
       },
       "fog": {
-        "revealed": [],
+        "revealed": [
+          {
+            "type": "rect",
+            "x": 56,
+            "y": 56,
+            "w": 378,
+            "h": 308
+          }
+        ],
         "hidden": []
       },
       "tokens": [
@@ -271,7 +279,7 @@
       "title": "① Start Here — Running the One-Shot",
       "visibility": "hidden",
       "sort_order": 0,
-      "body": "THE SUNLESS SHRINE — a 2-3 hour Dungeons & Dragons 5e one-shot for four 2nd-level characters.\n\nPREMISE: Under a hill the locals won't name, a buried shrine once held a 'morning stone' that kept the dark out. A small cult found it, and in trying to wake an older, colder power they snuffed the stone's light. Now a sickly green 'sunless flame' burns on the altar, the shrine's dead rise, and the blight is creeping toward the valley. The party is sent (or lured) down to put the light out.\n\nHOOK (pick one): a missing sibling followed the cult down; the village well has gone black and bitter; a dying scholar pays the party to recover the morning stone.\n\nRUNNING IT IN GAMETABLE:\n- The map 'The Sunless Shrine' is set as the active scene. Fog starts covering everything — use the reveal tool to open each room as the party enters it.\n- Monster tokens are hidden from players by default. Un-hide a token (click it) the moment that encounter begins so it pops onto the players' screen.\n- Players click a creature's token to see its public description; the full SRD stat block is in the creature's DM-only notes (hidden stats), which only you can see.\n- Two handouts are in the Gallery: the 'Explorer's Map' (hand it out once they've mapped the place) and the 'Warning Glyph' (show it when they reach the shrine door). Push a handout to swap the players' view from the map to the image.\n\nSCALING: For four 1st-level PCs, cut the Hall of Bones to two skeletons and give the Keeper 24 hp. For 4th-level PCs, double every group and let the Keeper start with spiritual weapon already up.\n\nTONE: quiet, cold, and wrong. The deeper they go, the less sound carries."
+      "body": "THE SUNLESS SHRINE — a 2-3 hour Dungeons & Dragons 5e one-shot for four 2nd-level characters.\n\nPREMISE: Under a hill the locals won't name, a buried shrine once held a 'morning stone' that kept the dark out. A small cult found it, and in trying to wake an older, colder power they snuffed the stone's light. Now a sickly green 'sunless flame' burns on the altar, the shrine's dead rise, and the blight is creeping toward the valley. The party is sent (or lured) down to put the light out.\n\nHOOK (pick one): a missing sibling followed the cult down; the village well has gone black and bitter; a dying scholar pays the party to recover the morning stone.\n\nRUNNING IT IN GAMETABLE:\n- The map 'The Sunless Shrine' is set as the active scene. The entrance chamber is already revealed, so players see the room they start in; use the Fog tool to open each further room as the party enters it (Reset fog re-covers everything).\n- Monster tokens are hidden from players by default. Un-hide a token (click it) the moment that encounter begins so it pops onto the players' screen.\n- Players click a creature's token to see its public description; the full SRD stat block is in the creature's DM-only notes (hidden stats), which only you can see.\n- Two handouts are in the Gallery: the 'Explorer's Map' (hand it out once they've mapped the place) and the 'Warning Glyph' (show it when they reach the shrine door). Push a handout to swap the players' view from the map to the image.\n\nSCALING: For four 1st-level PCs, cut the Hall of Bones to two skeletons and give the Keeper 24 hp. For 4th-level PCs, double every group and let the Keeper start with spiritual weapon already up.\n\nTONE: quiet, cold, and wrong. The deeper they go, the less sound carries."
     },
     {
       "title": "② Areas 1-2: The Descent & the Warren",

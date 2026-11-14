@@ -85,6 +85,14 @@ export interface CreaturePublic {
   public_stats: string;
 }
 
+export interface Note {
+  id: string;
+  title: string;
+  body: string;
+  visibility?: string; // "hidden" | "public" (DM view only; omitted for players)
+  sort_order?: number;
+}
+
 export interface DiceRoll {
   id: string;
   roller_type: string;
