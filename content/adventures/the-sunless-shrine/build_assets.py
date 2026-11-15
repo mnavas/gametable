@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
-"""Generate all original art for the "Sunless Shrine" one-shot bundle.
+"""Generate the ORIGINAL procedural art for the "Sunless Shrine" one-shot bundle.
 
-Everything here is drawn from scratch with Pillow so the whole adventure is
-freely redistributable (CC BY 4.0) with no third-party asset licensing. Re-run
-to regenerate; tweak the ROOMS / palette to make your own map.
+NOTE: the art currently shipped in this bundle (maps/, tokens/, handouts/) is a
+later, hand-finished illustrated set keyed to a 1408x768 map on a 41px grid.
+This script is the earlier Pillow fallback that draws a 2100x1540 / 70px map from
+scratch; it is kept for provenance and as a tweakable starting point, but running
+it will OVERWRITE the shipped illustrated assets and will NOT match the token
+coordinates in bundle.json. Re-point / re-coordinate bundle.json if you use it.
+
+Everything here is drawn from scratch with Pillow so a fully procedural version
+of the adventure stays freely redistributable (CC BY 4.0) with no third-party
+asset licensing.
 
     python3 build_assets.py
 

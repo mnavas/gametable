@@ -138,12 +138,12 @@
     {
       "name": "The Sunless Shrine",
       "image": "maps/sunless-shrine.png",
-      "width": 2100,
-      "height": 1540,
+      "width": 1408,
+      "height": 768,
       "active": true,
       "grid": {
         "type": "square",
-        "size": 70,
+        "size": 41,
         "offset_x": 0,
         "offset_y": 0,
         "color": "#2a2d36",
@@ -153,10 +153,10 @@
         "revealed": [
           {
             "type": "rect",
-            "x": 56,
-            "y": 56,
-            "w": 378,
-            "h": 308
+            "x": 0,
+            "y": 0,
+            "w": 250,
+            "h": 300
           }
         ],
         "hidden": []
@@ -165,8 +165,8 @@
         {
           "creature": "pc-fighter",
           "label": "Fighter",
-          "x": 175,
-          "y": 175,
+          "x": 143,
+          "y": 143,
           "size": 1,
           "color": "#9e3a30",
           "hidden_from_players": false,
@@ -175,8 +175,8 @@
         {
           "creature": "pc-cleric",
           "label": "Cleric",
-          "x": 245,
-          "y": 175,
+          "x": 184,
+          "y": 143,
           "size": 1,
           "color": "#cbb456",
           "hidden_from_players": false,
@@ -185,8 +185,8 @@
         {
           "creature": "pc-rogue",
           "label": "Rogue",
-          "x": 175,
-          "y": 245,
+          "x": 143,
+          "y": 184,
           "size": 1,
           "color": "#3a6848",
           "hidden_from_players": false,
@@ -195,8 +195,8 @@
         {
           "creature": "pc-wizard",
           "label": "Wizard",
-          "x": 245,
-          "y": 245,
+          "x": 184,
+          "y": 184,
           "size": 1,
           "color": "#405296",
           "hidden_from_players": false,
@@ -205,8 +205,8 @@
         {
           "creature": "giant-rat",
           "label": "Rat A",
-          "x": 665,
-          "y": 175,
+          "x": 348,
+          "y": 102,
           "size": 1,
           "color": "#5c4a30",
           "hidden_from_players": true
@@ -214,8 +214,8 @@
         {
           "creature": "giant-rat",
           "label": "Rat B",
-          "x": 735,
-          "y": 245,
+          "x": 430,
+          "y": 184,
           "size": 1,
           "color": "#5c4a30",
           "hidden_from_players": true
@@ -223,8 +223,8 @@
         {
           "creature": "giant-rat",
           "label": "Rat C",
-          "x": 805,
-          "y": 175,
+          "x": 471,
+          "y": 102,
           "size": 1,
           "color": "#5c4a30",
           "hidden_from_players": true
@@ -232,8 +232,8 @@
         {
           "creature": "stirge",
           "label": "Stirge",
-          "x": 875,
-          "y": 175,
+          "x": 389,
+          "y": 143,
           "size": 1,
           "color": "#8a4a6a",
           "hidden_from_players": true
@@ -241,8 +241,8 @@
         {
           "creature": "giant-spider",
           "label": "Gallery Spider",
-          "x": 245,
-          "y": 735,
+          "x": 820,
+          "y": 102,
           "size": 2,
           "color": "#2a2e36",
           "hidden_from_players": true
@@ -250,8 +250,8 @@
         {
           "creature": "skeleton",
           "label": "Skeleton 1",
-          "x": 875,
-          "y": 735,
+          "x": 553,
+          "y": 389,
           "size": 1,
           "color": "#8c887a",
           "hidden_from_players": true
@@ -259,8 +259,8 @@
         {
           "creature": "skeleton",
           "label": "Skeleton 2",
-          "x": 1015,
-          "y": 665,
+          "x": 676,
+          "y": 430,
           "size": 1,
           "color": "#8c887a",
           "hidden_from_players": true
@@ -268,8 +268,8 @@
         {
           "creature": "skeleton",
           "label": "Skeleton 3",
-          "x": 1085,
-          "y": 805,
+          "x": 758,
+          "y": 389,
           "size": 1,
           "color": "#8c887a",
           "hidden_from_players": true
@@ -277,8 +277,8 @@
         {
           "creature": "cult-fanatic",
           "label": "The Keeper",
-          "x": 1715,
-          "y": 805,
+          "x": 1045,
+          "y": 471,
           "size": 1,
           "color": "#96e696",
           "hidden_from_players": true
@@ -286,8 +286,8 @@
         {
           "creature": "skeleton",
           "label": "Altar Guard L",
-          "x": 1575,
-          "y": 595,
+          "x": 963,
+          "y": 430,
           "size": 1,
           "color": "#8c887a",
           "hidden_from_players": true
@@ -295,8 +295,8 @@
         {
           "creature": "skeleton",
           "label": "Altar Guard R",
-          "x": 1855,
-          "y": 875,
+          "x": 1127,
+          "y": 430,
           "size": 1,
           "color": "#8c887a",
           "hidden_from_players": true
