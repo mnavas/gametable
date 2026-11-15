@@ -22,8 +22,9 @@ and the **share links** you give players.
 
 - In the campaign, open the **Maps** panel and **upload a map image** (PNG/JPG/WebP).
   The first map you upload becomes the active scene; click any map to switch to it.
-- A square **grid** is drawn over the map. (Grid size, colour, and feet-per-square
-  are configurable per map.)
+- A square **grid** is drawn over the map. (Grid size, colour, and the distance one
+  square represents — feet, metres, or whatever unit your system uses — are configurable
+  per map.)
 - **Fog of war:** players start seeing nothing. Turn on the **Fog tool** and drag a
   rectangle to **reveal** an area; use **Reset fog** to cover everything again.
   You always see the whole map (fog shows as a dim tint); players see only the

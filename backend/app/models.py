@@ -150,7 +150,7 @@ class Map(Base):
     grid_offset_x: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     grid_offset_y: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     grid_color: Mapped[str] = mapped_column(String(32), default="#000000", nullable=False)
-    unit_per_cell: Mapped[float] = mapped_column(Float, default=5.0, nullable=False)  # e.g. 5 ft
+    unit_per_cell: Mapped[float] = mapped_column(Float, default=5.0, nullable=False)  # distance one cell is, in the game's own unit (e.g. 5 ft)
 
     # Fog of war: list of revealed shapes (polygons/rects) in map coords.
     # DM-only detail; players receive only the derived "revealed" set.

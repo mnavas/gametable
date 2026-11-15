@@ -1,11 +1,13 @@
 # GameTable
 
-Self-hosted virtual tabletop (VTT) for D&D — in the spirit of Owlbear Rodeo, but you
-run it on your own server. Each Dungeon Master gets an account and keeps their
-campaigns, maps, creature library, notes, and gallery private. Players join a
-campaign through a share link (no account needed), see the fog-obscured map with live
-tokens, click tokens for public info, view handouts the DM pushes, and roll dice in a
-shared log (publicly or silently).
+Self-hosted virtual tabletop (VTT) for tabletop RPGs — built with **D&D front and
+center**, and system-agnostic enough to run just about any game (free-form stat blocks,
+any dice formula, a grid scale you set — there's no rules engine in the way). In the
+spirit of Owlbear Rodeo, but you run it on your own server. Each Dungeon Master gets an
+account and keeps their campaigns, maps, creature library, notes, and gallery private.
+Players join a campaign through a share link (no account needed), see the fog-obscured
+map with live tokens, click tokens for public info, view handouts the DM pushes, and
+roll dice in a shared log (publicly or silently).
 
 **Website:** https://mnavas.github.io/gametable/ · **Docs:** [installation](docs/installation.md)
 · [DM guide](docs/dm-guide.md) · [player guide](docs/player-guide.md) · [architecture](docs/architecture.md)

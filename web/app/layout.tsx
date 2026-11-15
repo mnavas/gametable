@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
   title: "GameTable",
-  description: "Self-hosted virtual tabletop for D&D",
+  description: "Self-hosted virtual tabletop for D&D and any tabletop RPG",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
